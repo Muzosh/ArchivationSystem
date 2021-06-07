@@ -1,0 +1,76 @@
+
+import pika
+import json
+from uuid import uuid4
+from datetime import datetime
+
+from rabbitmq_connection.task_consumer import Connection_maker
+from database.db_library import Mysql_connection, Database_Library
+from database.table_classes.archivation_file import Archivated_file
+from common.exceptions import WRONG_RECORD_FORMAT
+
+
+def format_task_message(file_id:int):
+    task_message = {
+        'task' : 'Retimestamp',
+        'file_id' : file_id,
+    }
+    return json.dumps(task_message)
+
+def make_task(channel, queue, task_message):
+    channel.basic_publish(
+        exchange='',
+        routing_key= queue,
+        properties= pika.BasicProperties(correlation_id=str(uuid4)),
+        body=task_message
+    )
+
+def publish_retimestamping_tasks(files_to_retimestamp:list, config_rabbit:dict):
+    c_maker = Connection_maker(config_rabbit.get('rabbitmq_connection'))
+    connection = c_maker.make_connection()
+    channel = connection.channel()
+
+    for file_to_ret in files_to_retimestamp:
+        make_task(
+            channel,
+            config_rabbit['rabbitmq_info'].get('task_queue'),
+            format_task_message(file_to_ret)
+        ) 
+    channel.close()
+    connection.close()
+
+def get_files_to_retimestamp(db_config):
+    files_to_retimestamp= set()
+    with Mysql_connection(db_config) as db_connection:
+        db_api = Database_Library(db_connection)
+        file_ids = db_api.get_all_filedIDs()
+        for f_id in file_ids:
+            file_rec = get_file_rec(f_id, db_api)
+            if compare_expiration_date(file_rec):
+                files_to_retimestamp.add(f_id)
+    return list(files_to_retimestamp)
+
+def get_file_rec(file_ID, db_api):
+    return db_api.get_specific_ArchivatedFile_record_by_FileId(file_ID)
+
+def compare_expiration_date(file_rec:Archivated_file):
+    if not isinstance(file_rec.ExpirationDateTS, datetime):
+        return False #LOG IT
+    difference = file_rec.ExpirationDateTS - datetime.now()
+    if difference.days < 2:
+        return True
+    return False
+
+
+def checker_controller(config):
+    print("Checking files to be validated")
+    list_of_files_to_retimestamp = get_files_to_retimestamp(config.get("db_config"))
+    print("Number of files to be retimestamped: ",len(list_of_files_to_retimestamp))
+    if len(list_of_files_to_retimestamp) == 0:
+        return 
+    print("Publishing tasks")
+    publish_retimestamping_tasks(
+        list_of_files_to_retimestamp,
+        config
+    )
+
