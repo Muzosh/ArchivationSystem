@@ -12,7 +12,7 @@ from common.yaml_parser import parse_yaml_config
 
 def main():
     parsed_config = parse_yaml_config(
-        "/home/server/Desktop/Archivation-System/example_configs&files/archivation_worker_config.yaml"
+        "/home/server/Desktop/Archivation-System/example_config/archivation_worker_config.yaml"
     )
 
     crl = archiver.get_current_crl(

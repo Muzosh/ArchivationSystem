@@ -35,7 +35,7 @@
     * ensure that user which is used for remote login has access rigths to given directories
 
 ### Config formats
-* examples can be found in folder ./example_configs&files
+* examples can be found in folder ./example_config
 * Inside all config examples are comments explaining different fields
 * Inside testing_config.yaml are comments for the most common config parameters
 * All configs needs part for rabbitmq connection

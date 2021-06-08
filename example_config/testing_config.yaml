@@ -1,4 +1,4 @@
-rabbitmq_connection: #connection paramters for connecting to rabbitmq
+rabbitmq_connection: #connection parameters for connecting to rabbitmq
   host: "localhost"
   virtual_host: "/"
   port: "5672"

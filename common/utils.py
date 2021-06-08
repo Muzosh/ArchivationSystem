@@ -104,7 +104,6 @@ def get_private_key(path, password):
         private_key = serialization.load_pem_private_key(
             pk.read(), password=password.encode(), backend=default_backend()
         )
-        pk.close()
     return private_key
 
 
@@ -130,7 +129,6 @@ def get_public_key(path):
         public_key = serialization.load_pem_public_key(
             k, backend=default_backend()
         )
-        pk.close()
     return public_key
 
 

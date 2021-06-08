@@ -36,7 +36,7 @@ class Retimestamper:
 
     on init it needs database library object and
     configuration file. Example could be found
-    in example_config&files and it retimestamping_info part
+    in example_config and it retimestamping_info part
     """
 
     def __init__(self, db_lib, config: dict):

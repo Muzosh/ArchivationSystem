@@ -6,7 +6,7 @@ from task_makers.retimestamping.retimestamping_checker import (
 
 def main():
     config = parse_yaml_config(
-        r"/home/server/Desktop/Archivation-System/example_configs&files/testing_config.yaml"
+        r"/home/server/Desktop/Archivation-System/example_config/testing_config.yaml"
     )
     checker_controller(config)
 

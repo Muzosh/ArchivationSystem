@@ -41,13 +41,13 @@ class Archiver:
 
     on init it needs database library object and
     configuration file. Example could be found
-    in example_config&files and it needs archivation_system_info part
+    in example_config and it needs archivation_system_info part
     """
 
     def __init__(self, db_lib, config: dict):
         self.db_lib = db_lib
         self.archivation_config = config
-        self.archiveted_file_rec = ArchivedFile()
+        self.archived_file_rec = ArchivedFile()
         self.file_pack_record = FilePackage()
         self.storage_dir = self.archivation_config.get("storage_dir_path")
 
@@ -77,9 +77,9 @@ class Archiver:
 
     def _assign_original_data(self, file_path, owner):
         logger.info("[archivation] filling archivation data info")
-        self.archiveted_file_rec.FileName = self._get_file_name(file_path)
-        self.archiveted_file_rec.OwnerName = owner
-        self.archiveted_file_rec.OriginalFilePath = file_path
+        self.archived_file_rec.FileName = self._get_file_name(file_path)
+        self.archived_file_rec.OwnerName = owner
+        self.archived_file_rec.OriginalFilePath = file_path
 
     def _assign_tsa_info(self):
         logger.info("[archivation] filling TSA info to file package record")
@@ -118,8 +118,8 @@ class Archiver:
                 " storage"
             )
             (
-                self.archiveted_file_rec.PackageStoragePath,
-                self.archiveted_file_rec.OriginFileHashSha512,
+                self.archived_file_rec.PackageStoragePath,
+                self.archived_file_rec.OriginFileHashSha512,
             ) = self._get_file(file_path)
         else:
             logger.info(
@@ -127,29 +127,29 @@ class Archiver:
                 " storage"
             )
             (
-                self.archiveted_file_rec.PackageStoragePath,
-                self.archiveted_file_rec.OriginFileHashSha512,
+                self.archived_file_rec.PackageStoragePath,
+                self.archived_file_rec.OriginFileHashSha512,
             ) = self._get_remote_file(file_path)
         logger.info("[archivation] validating data transfer")
         self._validate_data_transfer(
-            self.archiveted_file_rec.OriginFileHashSha512, self.dst_file_path
+            self.archived_file_rec.OriginFileHashSha512, self.dst_file_path
         )
         logger.info("[archivation] data transfer completed succesfully")
 
     def _make_ts0(self):
         logger.info("[archivation] creating timestamp for original file")
         ts0 = self._timestamp_data(
-            self.archiveted_file_rec.OriginFileHashSha512, "timestamp0"
+            self.archived_file_rec.OriginFileHashSha512, "timestamp0"
         )
-        self.archiveted_file_rec.TimeOfFirstTS = rfc3161ng.get_timestamp(ts0)
+        self.archived_file_rec.TimeOfFirstTS = rfc3161ng.get_timestamp(ts0)
         logger.info("[archivation] timestamp recieved successfully")
 
     def _make_package0(self):
         logger.info("[archivation] packing timestamp0 and file to tar package")
         package0_tar_path = self._make_tar_package_from_dir_content(
-            self.archiveted_file_rec.PackageStoragePath, "Package0.tar"
+            self.archived_file_rec.PackageStoragePath, "Package0.tar"
         )
-        self.archiveted_file_rec.Package0HashSha512 = hash_file(
+        self.archived_file_rec.Package0HashSha512 = hash_file(
             sha512, package0_tar_path
         )
         logger.info("[archivation] package0 created successfully")
@@ -157,31 +157,31 @@ class Archiver:
     def _sign_package(self):
         logger.info("[archivation] geting signature of hash of package0")
         signature = self.__make_signature(
-            self.archiveted_file_rec.Package0HashSha512
+            self.archived_file_rec.Package0HashSha512
         )
         sig_path = store_signature(
-            self.archiveted_file_rec.PackageStoragePath, signature
+            self.archived_file_rec.PackageStoragePath, signature
         )
         logger.info(
             "[archivation] signature stored in directory witch package0"
         )
-        self.archiveted_file_rec.SignatureHashSha512 = hash_file(
+        self.archived_file_rec.SignatureHashSha512 = hash_file(
             sha512, sig_path
         )
         logger.info("[archivation] getting signing certificate")
         cert = get_certificate(
             self.archivation_config["signing_info"]["certificate_path"]
         )
-        self.archiveted_file_rec.SigningCert = cert.public_bytes(Encoding.PEM)
+        self.archived_file_rec.SigningCert = cert.public_bytes(Encoding.PEM)
         logger.info("[archivation] certificate stored in database record")
 
     def _make_ts1(self):
         logger.info("[archivation] getting timestamp for package0")
         ts1 = self._timestamp_data(
-            self.archiveted_file_rec.SignatureHashSha512, "timestamp1"
+            self.archived_file_rec.SignatureHashSha512, "timestamp1"
         )
         self.file_pack_record.IssuingDate = rfc3161ng.get_timestamp(ts1)
-        self.archiveted_file_rec.ExpirationDateTS = self._get_expiration_date(
+        self.archived_file_rec.ExpirationDateTS = self._get_expiration_date(
             ts1
         )
         logger.info("[archivation] timestamp recieved succesfully")
@@ -192,7 +192,7 @@ class Archiver:
             " to archive directory"
         )
         dir_path = create_new_dir_in_location(
-            self.archiveted_file_rec.PackageStoragePath, "certificate_files"
+            self.archived_file_rec.PackageStoragePath, "certificate_files"
         )
         path_ca = self.archivation_config["signing_info"]["certificate_path"]
         path_crl = self.archivation_config["signing_info"]["crl_path"]
@@ -213,7 +213,7 @@ class Archiver:
             "[archivation] creating final tar package with archive file"
         )
         final_tar_path = self._make_tar_package_from_dir_content(
-            self.archiveted_file_rec.PackageStoragePath, "Package1.tar"
+            self.archived_file_rec.PackageStoragePath, "Package1.tar"
         )
         self.file_pack_record.PackageHashSha512 = hash_file(
             sha512, final_tar_path
@@ -228,13 +228,13 @@ class Archiver:
         )
         try:
             self.db_lib.add_full_records(
-                archf_data=self.archiveted_file_rec,
+                archf_data=self.archived_file_rec,
                 filep_data=self.file_pack_record,
             )
         except Exception as e:
             logger.warning("unable to write database record of archivation")
             logger.debug("deleting created archived file")
-            delete_file(self.archiveted_file_rec.PackageStoragePath)
+            delete_file(self.archived_file_rec.PackageStoragePath)
             raise e
 
     def _timestamp_data(self, fhash, ts_name):
@@ -244,7 +244,7 @@ class Archiver:
             "[archivation] timestamp recieved successfully, storing timestamp"
             " to archive direcotry"
         )
-        store_ts_data(ts, self.archiveted_file_rec.PackageStoragePath, ts_name)
+        store_ts_data(ts, self.archived_file_rec.PackageStoragePath, ts_name)
         logger.debug("[archivation] ts stored")
         return ts
 
@@ -261,7 +261,7 @@ class Archiver:
             str(copy_dir_path),
         )
         self.dst_file_path = copy_file_to_dir(
-            file_path, copy_dir_path, self.archiveted_file_rec.FileName
+            file_path, copy_dir_path, self.archived_file_rec.FileName
         )
         logger.debug(
             "[archivation] file copied, path: %s", str(self.dst_file_path)
@@ -351,7 +351,7 @@ class Archiver:
     def _copy_remote_file_to_archive(
         self, connection_sftp, file_path_to_copy, dst_dir
     ):
-        dst = os.path.join(dst_dir, self.archiveted_file_rec.FileName)
+        dst = os.path.join(dst_dir, self.archived_file_rec.FileName)
         logger.debug("[archivation] copying file from sftp storage")
         connection_sftp.get(remotepath=file_path_to_copy, localpath=dst)
         logger.debug("[archivation] copying finished")

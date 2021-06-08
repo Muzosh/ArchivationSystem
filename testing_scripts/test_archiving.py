@@ -5,7 +5,7 @@ from database.db_library import DatabaseLibrary, MysqlConnection
 
 def main():
     config = parse_yaml_config(
-        r"/home/server/Desktop/Archivation-System/example_configs&files/archivation_worker_config.yaml"
+        r"/home/server/Desktop/Archivation-System/example_config/archivation_worker_config.yaml"
     )
     config_for_archiver = config.get("archivation_system_info")
     db_config = config.get("db_config")

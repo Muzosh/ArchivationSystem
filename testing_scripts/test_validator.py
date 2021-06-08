@@ -5,7 +5,7 @@ from validation.validator import Validator
 
 def main():
     config = parse_yaml_config(
-        r"/home/server/Desktop/Archivation-System/example_configs&files/validation_worker_config.yaml"
+        r"/home/server/Desktop/Archivation-System/example_config/validation_worker_config.yaml"
     )
     db_config = config.get("db_config")
     with MysqlConnection(db_config) as db_connection:

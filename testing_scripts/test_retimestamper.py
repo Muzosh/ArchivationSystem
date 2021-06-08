@@ -5,7 +5,7 @@ from retimestamping.retimestamper import Retimestamper
 
 def main():
     config = parse_yaml_config(
-        r"/home/server/Desktop/Archivation-System/example_configs&files/retimestamping_worker_cfg.yaml"
+        r"/home/server/Desktop/Archivation-System/example_config/retimestamping_worker_cfg.yaml"
     )
     db_config = config.get("db_config")
     with MysqlConnection(db_config) as db_connection:

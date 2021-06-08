@@ -11,14 +11,14 @@ from common.exceptions import RecordDoesNotExistCustomException
 from mysql.connector import MySQLConnection
 
 from .sql_scripts.sql_queries import (
-    QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVATED_FILES,
+    QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVED_FILES,
     QUERY_ALL_COLUMNS_ON_FILEID_FILE_PACKAGES,
     QUERY_ALL_COLUMNS_ON_FILEID_FILE_PACKAGES_TOP1,
-    QUERY_FILEID_ON_FILENAME_OWNER_ARCHIVATED_FILES,
-    QUERY_INSRET_INTO_ARCHIVATED_FILES,
-    QUERY_INSRET_INTO_FILE_PACKAGES,
+    QUERY_FILEID_ON_FILENAME_OWNER_ARCHIVED_FILES,
+    QUERY_INSERT_INTO_ARCHIVED_FILES,
+    QUERY_INSERT_INTO_FILE_PACKAGES,
     QUERY_SELECT_FILEID,
-    QUERY_UPDATE_EXPIRATION_DATE_ARCHIVATED_FILES,
+    QUERY_UPDATE_EXPIRATION_DATE_ARCHIVED_FILES,
 )
 from .table_classes.archivation_file import ArchivedFile
 from .table_classes.file_package import FilePackage
@@ -177,7 +177,7 @@ class DatabaseLibrary(object):
         )
         if len(records_values) == 0:
             raise Exception(
-                "NO FILE PACKAGE RECORDS EXISTS FOR GIVEN ARCHIVATED_FILE ID"
+                "NO FILE PACKAGE RECORDS EXISTS FOR GIVEN ARCHIVED_FILE ID"
             )
         if latest:
             return self.__get_file_packages(records_values)[0]
@@ -201,7 +201,7 @@ class DatabaseLibrary(object):
         self, arch_f: ArchivedFile
     ):
         arch_f.validate_columns()
-        return QUERY_INSRET_INTO_ARCHIVATED_FILES.format(
+        return QUERY_INSERT_INTO_ARCHIVED_FILES.format(
             arch_f.FileName,
             arch_f.OwnerName,
             str(arch_f.OriginalFilePath),
@@ -217,22 +217,22 @@ class DatabaseLibrary(object):
     def _get_formated_query_based_on_filename_owner(
         self, file_name, owner_name
     ):
-        return QUERY_FILEID_ON_FILENAME_OWNER_ARCHIVATED_FILES.format(
+        return QUERY_FILEID_ON_FILENAME_OWNER_ARCHIVED_FILES.format(
             file_name,
             owner_name,
         )
 
     def _get_formated_query_record_archived_files_by_file_id(self, file_id):
-        return QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVATED_FILES.format(file_id)
+        return QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVED_FILES.format(file_id)
 
     def _get_formated_query_update_expiration_date(self, file_id, date):
-        return QUERY_UPDATE_EXPIRATION_DATE_ARCHIVATED_FILES.format(
+        return QUERY_UPDATE_EXPIRATION_DATE_ARCHIVED_FILES.format(
             date, file_id
         )
 
     def _get_formated_query_insert_file_packages(self, file_p: FilePackage):
         file_p.validate_columns()
-        return QUERY_INSRET_INTO_FILE_PACKAGES.format(
+        return QUERY_INSERT_INTO_FILE_PACKAGES.format(
             file_p.ArchivedFileID,
             file_p.TimeStampingAuthority,
             file_p.IssuingDate.strftime("%Y-%m-%d %H:%M:%S"),
