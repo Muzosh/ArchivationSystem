@@ -107,7 +107,7 @@ class Archiver:
         ) as f:  # NOTE: comment if you dont want to use CRL
             crl_s = f.load()  # NOTE: comment if you dont want to use CRL
         validate_certificate(
-            crl_s, path_tsa_ca_pem
+            crl_s, path_ca
         )  # NOTE: comment if you dont want to use CRL
         logger.debug("signing cert valid")
 
