@@ -12,14 +12,14 @@ from hashlib import sha512
 from tempfile import TemporaryDirectory
 
 from common.exceptions import (
-    ArchivedFileNotValidError,
-    CertificateNotValidError,
-    DigestsNotMatchedError,
-    FileNotInDirectoryError,
+    ArchivedFileNotValidCustomException,
+    CertificateNotValidCustomException,
+    DigestsNotMatchedCustomException,
+    FileNotInDirectoryCustomException,
     OriginalFileNotValidError,
-    TimestampInvalid,
-    UnableToGetRemoteFileDigest,
-    WrongPathToArchivedFileError,
+    TimestampInvalidCustomException,
+    UnableToGetRemoteFileDigestCustomException,
+    WrongPathToArchivedFileCustomException,
     WrongTaskCustomException,
 )
 from common.utils import (
@@ -87,7 +87,7 @@ class Validator:
             )
             logger.warning(result)
 
-        except ArchivedFileNotValidError:
+        except ArchivedFileNotValidCustomException:
             result = (
                 "archived file with id: {}                 isnt valid in"
                 " archive location".format(str(archived_file_rec.FileID))
@@ -145,14 +145,14 @@ class Validator:
                         "[validation] validation of initial package complete"
                     )
                 except (
-                    TimestampInvalid,
-                    DigestsNotMatchedError,
+                    TimestampInvalidCustomException,
+                    DigestsNotMatchedCustomException,
                     InvalidSignature,
-                    FileNotInDirectoryError,
-                    CertificateNotValidError,
+                    FileNotInDirectoryCustomException,
+                    CertificateNotValidCustomException,
                 ):
                     logger.warning("[validation] package invalid")
-                    raise ArchivedFileNotValidError(
+                    raise ArchivedFileNotValidCustomException(
                         "[validation] package invalid"
                     )
             elif "PackageF" in tar_path:
@@ -164,13 +164,13 @@ class Validator:
                         "[validation] validation of onion package complete"
                     )
                 except (
-                    TimestampInvalid,
-                    DigestsNotMatchedError,
-                    FileNotInDirectoryError,
-                    CertificateNotValidError,
+                    TimestampInvalidCustomException,
+                    DigestsNotMatchedCustomException,
+                    FileNotInDirectoryCustomException,
+                    CertificateNotValidCustomException,
                 ):
                     logger.warning("[validation] package invalid")
-                    raise ArchivedFileNotValidError(
+                    raise ArchivedFileNotValidCustomException(
                         "[validation] package invalid"
                     )
 
@@ -179,7 +179,7 @@ class Validator:
                     "[validation] Path to package for validation isnt correct",
                     str(tar_path),
                 )
-                raise WrongPathToArchivedFileError("Wrong file for validation")
+                raise WrongPathToArchivedFileCustomException("Wrong file for validation")
             num += 1
         return result
 
@@ -328,7 +328,7 @@ class Validator:
                 "[validation] hashes of files do not match, validation wasnt"
                 " succesffull"
             )
-            raise DigestsNotMatchedError(
+            raise DigestsNotMatchedCustomException(
                 "[validation] hashes of files do not match, validation wasnt"
                 " succesffull"
             )
@@ -377,7 +377,7 @@ class Validator:
                 "[validation] Timestamp invalid, timestamp path: %s",
                 str(ts_path),
             )
-            raise TimestampInvalid("Timestamp invalid")
+            raise TimestampInvalidCustomException("Timestamp invalid")
         logger.debug("[validation] timestamp is valid")
 
     def _get_file_path_from_dir(self, dir_path, file_name):
@@ -394,7 +394,7 @@ class Validator:
                 str(file_name),
                 str(dir_path),
             )
-            raise FileNotInDirectoryError(
+            raise FileNotInDirectoryCustomException(
                 "No files with given name in directory. name: %s", file_name
             )
         logger.debug("[validation] file found in directory")
@@ -422,7 +422,7 @@ class Validator:
         )
         try:
             self._verify_package_hashes(archived_file_hash, hash_origin)
-        except (UnableToGetRemoteFileDigest, DigestsNotMatchedError):  # as e:
+        except (UnableToGetRemoteFileDigestCustomException, DigestsNotMatchedCustomException):  # as e:
             raise OriginalFileNotValidError("Remote file is not the same")
 
     def _get_remote_file_hash(self, file_path):
@@ -445,7 +445,7 @@ class Validator:
                     exc_info=True,
                     stack_info=True,
                 )
-                raise UnableToGetRemoteFileDigest(
+                raise UnableToGetRemoteFileDigestCustomException(
                     "Unable to get remote file digest"
                 )
 

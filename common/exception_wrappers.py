@@ -10,7 +10,7 @@ from .exceptions import (
     RecordDoesNotExistCustomException,
     WrongRecordFormatCustomException,
     ArchivationOperationCustomException,
-    CertificateNotValidError,
+    CertificateNotValidCustomException,
     WrongTaskCustomException,
 )
 
@@ -68,7 +68,7 @@ def task_exceptions_wrapper(function):
     def wrapper(*args, **kwargs):
         try:
             return function(*args, **kwargs)
-        except (CertificateNotValidError):  # as e: - was unused
+        except CertificateNotValidCustomException:  # as e: - was unused
             logger.warning(
                 "Certificate not valid", exc_info=True, stack_info=True
             )

@@ -7,7 +7,7 @@ from hashlib import sha512
 from uuid import uuid4
 
 import rfc3161ng
-from common.exceptions import FileTransferWasntSuccesfullError
+from common.exceptions import FileTransferNotSuccesfullCustomException
 from common.utils import (
     copy_file_to_dir,
     create_new_dir_in_location,
@@ -369,7 +369,7 @@ class Archiver:
                 "[archivation] hashes of files do not match, file transfer"
                 " wasnt succesfull"
             )
-            raise FileTransferWasntSuccesfullError(
+            raise FileTransferNotSuccesfullCustomException(
                 "[archivation] hashes of files do not match, file transfer"
                 " wasnt succesfull"
             )

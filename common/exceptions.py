@@ -65,7 +65,9 @@ class ArchivationOperationCustomException(Exception):
     pass
 
 
-class FileTransferWasntSuccesfullError(ArchivationOperationCustomException):
+class FileTransferNotSuccesfullCustomException(
+    ArchivationOperationCustomException
+):
     """
     Raised when there was error during sftp transfer of files
     """
@@ -73,7 +75,7 @@ class FileTransferWasntSuccesfullError(ArchivationOperationCustomException):
     pass
 
 
-class RemoteTimemperError(ArchivationOperationCustomException):
+class RemoteTimemperCustomException(ArchivationOperationCustomException):
     """
     Raised when remote timestamping authority cannot be reached
     """
@@ -81,7 +83,7 @@ class RemoteTimemperError(ArchivationOperationCustomException):
     pass
 
 
-class ArchivedFileNotValidError(ArchivationOperationCustomException):
+class ArchivedFileNotValidCustomException(ArchivationOperationCustomException):
     """
     Raised when validation of archived file wasnt successful
     """
@@ -97,7 +99,9 @@ class OriginalFileNotValidError(ArchivationOperationCustomException):
     pass
 
 
-class WrongPathToArchivedFileError(ArchivationOperationCustomException):
+class WrongPathToArchivedFileCustomException(
+    ArchivationOperationCustomException
+):
     """
     Raised when path to archived file is incorrect
     """
@@ -105,7 +109,7 @@ class WrongPathToArchivedFileError(ArchivationOperationCustomException):
     pass
 
 
-class TimestampInvalid(ArchivationOperationCustomException):
+class TimestampInvalidCustomException(ArchivationOperationCustomException):
     """
     Raised when timestamp is not valid
     """
@@ -113,7 +117,7 @@ class TimestampInvalid(ArchivationOperationCustomException):
     pass
 
 
-class DigestsNotMatchedError(ArchivationOperationCustomException):
+class DigestsNotMatchedCustomException(ArchivationOperationCustomException):
     """
     Raised when 2 digests should matched but they dont
     """
@@ -121,7 +125,7 @@ class DigestsNotMatchedError(ArchivationOperationCustomException):
     pass
 
 
-class FileNotInDirectoryError(ArchivationOperationCustomException):
+class FileNotInDirectoryCustomException(ArchivationOperationCustomException):
     """
     Raised when file is not in directory in
     which it should be
@@ -130,7 +134,7 @@ class FileNotInDirectoryError(ArchivationOperationCustomException):
     pass
 
 
-class CertificateNotValidError(ArchivationOperationCustomException):
+class CertificateNotValidCustomException(ArchivationOperationCustomException):
     """
     Raised when certificates are not same
     """
@@ -138,7 +142,9 @@ class CertificateNotValidError(ArchivationOperationCustomException):
     pass
 
 
-class UnableToGetRemoteFileDigest(ArchivationOperationCustomException):
+class UnableToGetRemoteFileDigestCustomException(
+    ArchivationOperationCustomException
+):
     """
     Raised when there is problem to get remote file digest
     """

@@ -12,7 +12,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import asymmetric, hashes, serialization
 from OpenSSL import crypto
 
-from common.exceptions import CertificateNotValidError
+from common.exceptions import CertificateNotValidCustomException
 
 
 def store_ts_data(data, path, name):
@@ -280,9 +280,9 @@ def validate_certificate(crl_content, ca_file_path):
         ca.get_serial_number()
     )
     if revoked:
-        raise CertificateNotValidError("certificate was revoked")
+        raise CertificateNotValidCustomException("certificate was revoked")
     if not (valid):
-        raise CertificateNotValidError("certificate or crl is invalid")
+        raise CertificateNotValidCustomException("certificate or crl is invalid")
 
 
 def get_current_crl(url):

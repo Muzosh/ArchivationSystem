@@ -6,9 +6,9 @@ from hashlib import sha512
 
 import rfc3161ng
 from common.exceptions import (
-    DigestsNotMatchedError,
-    FileNotInDirectoryError,
-    TimestampInvalid,
+    DigestsNotMatchedCustomException,
+    FileNotInDirectoryCustomException,
+    TimestampInvalidCustomException,
 )
 from common.utils import (
     copy_file_to_dir,
@@ -109,7 +109,7 @@ class Retimestamper:
                 " invalid",
                 str(storage_dir),
             )
-            raise TimestampInvalid("Last timestamp of package is invalid")
+            raise TimestampInvalidCustomException("Last timestamp of package is invalid")
         logger.info(
             "[retimestamping] last package timestamp has been succesfuly"
             " validated"
@@ -153,7 +153,7 @@ class Retimestamper:
                 "[retimestamping] unable to find package in directory: %s",
                 str(dir_path),
             )
-            raise FileNotInDirectoryError(
+            raise FileNotInDirectoryCustomException(
                 "directory doesnt have files which shoud be there."
             )
         tar_package_path = os.path.join(dir_path, package_name[0])
@@ -201,7 +201,7 @@ class Retimestamper:
             " there. Tar Content: %s",
             str(names),
         )
-        raise FileNotInDirectoryError(
+        raise FileNotInDirectoryCustomException(
             "Tar package doesnt have files which shoud be there."
         )
 
@@ -241,7 +241,7 @@ class Retimestamper:
             logger.debug(
                 "[retimestamping] unable to find timestamp file in tarfile"
             )
-            raise FileNotInDirectoryError(
+            raise FileNotInDirectoryCustomException(
                 "[retimestamping] unable to find timestamp file in tarfile"
             )
 
@@ -260,7 +260,7 @@ class Retimestamper:
                 "[retimestamping] hashes of files do not match, verification"
                 " of last timestamp wasnt succesffull"
             )
-            raise DigestsNotMatchedError(
+            raise DigestsNotMatchedCustomException(
                 "[retimestamping] hashes of files do not match, verification"
                 " of last timestamp wasnt succesffull"
             )

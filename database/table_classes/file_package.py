@@ -33,7 +33,7 @@ class FilePackage(object):
         self.validate_columns()
 
     def validate_columns(self):
-        errornous_columns = False
+        error = False
         logger.debug("[db_record] starting validation of record")
 
         if not isinstance(self.ArchivedFileID, int):
@@ -41,13 +41,13 @@ class FilePackage(object):
                 "[db_record] wrong type of ArchivedFileID: %s",
                 str(type(self.ArchivedFileID)),
             )
-            errornous_columns = True
+            error = True
         if not isinstance(self.TimeStampingAuthority, str):
             logger.exception(
                 "[db_record] wrong type of Time Stamping authority: %s",
                 str(type(self.TimeStampingAuthority)),
             )
-            errornous_columns = True
+            error = True
         if not isinstance(self.IssuingDate, datetime):
             logger.exception(
                 "[db_record] wrong type of IssuingDate: %s",
@@ -58,16 +58,16 @@ class FilePackage(object):
                 "[db_record] wrong type of TsaCert: %s",
                 str(type(self.TsaCert)),
             )
-            errornous_columns = True
+            error = True
 
         if not isinstance(self.PackageHashSha512, bytes):
             logger.exception(
                 "[db_record] wrong type of PackageHashSha512: %s",
                 str(type(self.PackageHashSha512)),
             )
-            errornous_columns = True
+            error = True
 
-        if errornous_columns is True:
+        if error is True:
             raise WrongRecordFormatCustomException(
                 " Wrong format of values in object --> cannot be inserted"
                 " into DB"

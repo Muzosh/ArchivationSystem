@@ -46,68 +46,68 @@ class ArchivedFile(object):
         self.validate_columns()
 
     def validate_columns(self):
-        errornous_columns = False
+        error = False
         logger.debug("[db_record] starting validation of record")
         if not isinstance(self.FileName, str):
             logger.exception(
                 "[db_record] wrong type of FileName: %s",
                 str(type(self.FileName)),
             )
-            errornous_columns = True
+            error = True
         if not isinstance(self.OriginalFilePath, str):
             logger.exception(
                 "[db_record] wrong type of OriginalFilePath: %s",
                 str(type(self.OriginalFilePath)),
             )
-            errornous_columns = True
+            error = True
         if not isinstance(self.PackageStoragePath, str):
             logger.exception(
                 "[db_record] wrong type of PackageStoragePath: %s",
                 str(type(self.PackageStoragePath)),
             )
-            errornous_columns = True
+            error = True
         if not isinstance(self.OriginFileHashSha512, bytes):
             logger.exception(
                 "[db_record] wrong type of OriginFileHashSha512: %s",
                 str(type(self.OriginFileHashSha512)),
             )
-            errornous_columns = True
+            error = True
         if not isinstance(self.TimeOfFirstTS, datetime):
             logger.exception(
                 "[db_record] wrong type of TimeOfFirstTS: %s",
                 str(type(self.TimeOfFirstTS)),
             )
-            errornous_columns = True
+            error = True
 
         if not isinstance(self.SigningCert, bytes):
             logger.exception(
                 "[db_record] wrong type of SigningCert: %s",
                 str(type(self.SigningCert)),
             )
-            errornous_columns = True
+            error = True
 
         if not isinstance(self.SignatureHashSha512, bytes):
             logger.exception(
                 "[db_record] wrong type of SignatureHashSha512: %s",
                 str(type(self.SignatureHashSha512)),
             )
-            errornous_columns = True
+            error = True
 
         if not isinstance(self.Package0HashSha512, bytes):
             logger.exception(
                 "[db_record] wrong type of Package0HashSha512: %s",
                 str(type(self.Package0HashSha512)),
             )
-            errornous_columns = True
+            error = True
 
         if not isinstance(self.ExpirationDateTS, datetime):
             logger.exception(
                 "[db_record] wrong type of ExpirationDateTS: %s",
                 str(type(self.ExpirationDateTS)),
             )
-            errornous_columns = True
+            error = True
 
-        if errornous_columns is True:
+        if error is True:
             raise WrongRecordFormatCustomException(
                 "Wrong format of values in object --> cannot be inserted"
                 " into DB"
