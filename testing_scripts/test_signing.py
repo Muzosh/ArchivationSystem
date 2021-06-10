@@ -1,19 +1,23 @@
-from common.yaml_parser import parse_yaml_config
-from archivation import archiver
 from hashlib import sha512
 
+from archivation import archiver
+from common.yaml_parser import parse_yaml_config
+
+
 def main():
-    
-   crt = archiver.get_certificate('/home/server/Desktop/cert.pem')
-   print(type(crt))
-   prkey = archiver.get_private_key('/home/server/Desktop/key.pem', 'Password1')
 
-   signature = archiver.sign_data(b'ahoj', prkey)
+    crt = archiver.get_certificate("/home/server/Desktop/cert.pem")
+    print(type(crt))
+    prkey = archiver.get_private_key(
+        "/home/server/Desktop/key.pem", "Password1"
+    )
 
-   val = archiver.validate_signature(b'ahoj', signature, crt.public_key())
+    signature = archiver.sign_data(b"ahoj", prkey)
 
-   print(val)
+    val = archiver.validate_signature(b"ahoj", signature, crt.public_key())
 
-if __name__ == '__main__':
+    print(val)
+
+
+if __name__ == "__main__":
     main()
-

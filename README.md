@@ -35,7 +35,7 @@
     * ensure that user which is used for remote login has access rigths to given directories
 
 ### Config formats
-* examples can be found in folder ./example_configs&files
+* examples can be found in folder ./example_config
 * Inside all config examples are comments explaining different fields
 * Inside testing_config.yaml are comments for the most common config parameters
 * All configs needs part for rabbitmq connection
@@ -45,19 +45,19 @@
 
 ### Task Scripts
 
-| name | purpose |
-|------- | -----| 
-| archivation_task.py| Manual creation of task for archivation of given file
-| retimestamping_task.py| Regular checking of timestamps expiration dates in database and creating a task for those which validity is ending within 24 ours 
-| validation_task.py| Interactive interface for creating tasks for validation of archivated files
+| name                   | purpose                                                                                                                           |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| archivation_task.py    | Manual creation of task for archivation of given file                                                                             |
+| retimestamping_task.py | Regular checking of timestamps expiration dates in database and creating a task for those which validity is ending within 24 ours |
+| validation_task.py     | Interactive interface for creating tasks for validation of archived files                                                         |
 
 
 
 ### Workers
 
-| name | purpose |
-|------- | -----| 
-| archivation_worker.py | responsible for consuming archivation tasks from rabbitmq 
-| retimestamping_worker.py| responsible for consuming tasks for retimestamping
-| validation_worker.py| responsible for validation of archivated files 
+| name                     | purpose                                                   |
+| ------------------------ | --------------------------------------------------------- |
+| archivation_worker.py    | responsible for consuming archivation tasks from rabbitmq |
+| retimestamping_worker.py | responsible for consuming tasks for retimestamping        |
+| validation_worker.py     | responsible for validation of archived files              |
 
