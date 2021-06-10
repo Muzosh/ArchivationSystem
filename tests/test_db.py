@@ -3,8 +3,8 @@ from datetime import datetime
 
 # from common.yaml_parser import parse_yaml_config - was unused
 from database.db_library import DatabaseLibrary, MysqlConnection
-from database.table_classes.archivation_file import ArchivedFile
-from database.table_classes.file_package import FilePackage
+from database.archivation_file import ArchivedFile
+from database.file_package import FilePackage
 
 
 def main():

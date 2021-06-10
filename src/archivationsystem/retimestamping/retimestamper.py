@@ -23,7 +23,7 @@ from common.utils import (
     verify_timestamp,
 )
 from cryptography.hazmat.primitives.serialization import Encoding
-from database.table_classes.file_package import FilePackage
+from database.file_package import FilePackage
 
 logger = logging.getLogger("Archivation System")
 
@@ -109,7 +109,9 @@ class Retimestamper:
                 " invalid",
                 str(storage_dir),
             )
-            raise TimestampInvalidCustomException("Last timestamp of package is invalid")
+            raise TimestampInvalidCustomException(
+                "Last timestamp of package is invalid"
+            )
         logger.info(
             "[retimestamping] last package timestamp has been succesfuly"
             " validated"

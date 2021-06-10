@@ -7,7 +7,7 @@ from common.setup_logger import setup_logger
 from database.db_library import DatabaseLibrary, MysqlConnection
 from rabbitmq_connection.task_consumer import ConnectionMaker, TaskConsumer
 
-from .retimestamper import Retimestamper
+from retimestamping.retimestamper import Retimestamper
 
 # from contextlib import closing - was unused
 

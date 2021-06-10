@@ -179,7 +179,9 @@ class Validator:
                     "[validation] Path to package for validation isnt correct",
                     str(tar_path),
                 )
-                raise WrongPathToArchivedFileCustomException("Wrong file for validation")
+                raise WrongPathToArchivedFileCustomException(
+                    "Wrong file for validation"
+                )
             num += 1
         return result
 
@@ -422,7 +424,10 @@ class Validator:
         )
         try:
             self._verify_package_hashes(archived_file_hash, hash_origin)
-        except (UnableToGetRemoteFileDigestCustomException, DigestsNotMatchedCustomException):  # as e:
+        except (
+            UnableToGetRemoteFileDigestCustomException,
+            DigestsNotMatchedCustomException,
+        ):  # as e:
             raise OriginalFileNotValidError("Remote file is not the same")
 
     def _get_remote_file_hash(self, file_path):

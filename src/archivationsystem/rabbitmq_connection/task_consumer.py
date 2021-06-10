@@ -5,7 +5,6 @@ import threading
 from uuid import uuid4
 
 import pika
-from pika.credentials import PlainCredentials
 
 logger = logging.getLogger("Archivation System")
 
@@ -54,7 +53,7 @@ class ConnectionMaker(object):
         self.__enable_ssl = self.config.get("enable_ssl")
 
     def __set_credentials(self):
-        return PlainCredentials(
+        return pika.PlainCredentials(
             self.__credentials.get("name"),
             self.__credentials.get("password"),
             erase_on_connect=True,

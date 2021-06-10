@@ -26,8 +26,8 @@ from common.utils import (
     validate_certificate,
 )
 from cryptography.hazmat.primitives.serialization import Encoding
-from database.table_classes.archivation_file import ArchivedFile
-from database.table_classes.file_package import FilePackage
+from database.archivation_file import ArchivedFile
+from database.file_package import FilePackage
 
 logger = logging.getLogger("Archivation System")
 

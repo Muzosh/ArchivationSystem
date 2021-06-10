@@ -10,7 +10,7 @@ from common.exception_wrappers import db_lib_exception_wrapper
 from common.exceptions import RecordDoesNotExistCustomException
 from mysql.connector import MySQLConnection
 
-from .sql_scripts.sql_queries import (
+from database.sql_queries import (
     QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVED_FILES,
     QUERY_ALL_COLUMNS_ON_FILEID_FILE_PACKAGES,
     QUERY_ALL_COLUMNS_ON_FILEID_FILE_PACKAGES_TOP1,
@@ -20,8 +20,8 @@ from .sql_scripts.sql_queries import (
     QUERY_SELECT_FILEID,
     QUERY_UPDATE_EXPIRATION_DATE_ARCHIVED_FILES,
 )
-from .table_classes.archivation_file import ArchivedFile
-from .table_classes.file_package import FilePackage
+from database.archivation_file import ArchivedFile
+from database.file_package import FilePackage
 
 
 logger = logging.getLogger("Archivation System")

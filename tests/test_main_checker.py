@@ -1,5 +1,5 @@
 from common.yaml_parser import parse_yaml_config
-from task_makers.retimestamping.retimestamping_checker import (
+from retimestamping.retimestamping_checker import (
     checker_controller
 )
 

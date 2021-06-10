@@ -7,6 +7,7 @@ import paramiko
 import requests
 import rfc3161ng
 from cryptography import x509
+
 # from cryptography.exceptions import InvalidSignature - was unused
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import asymmetric, hashes, serialization
@@ -282,7 +283,9 @@ def validate_certificate(crl_content, ca_file_path):
     if revoked:
         raise CertificateNotValidCustomException("certificate was revoked")
     if not (valid):
-        raise CertificateNotValidCustomException("certificate or crl is invalid")
+        raise CertificateNotValidCustomException(
+            "certificate or crl is invalid"
+        )
 
 
 def get_current_crl(url):

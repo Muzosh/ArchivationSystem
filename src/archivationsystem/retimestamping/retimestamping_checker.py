@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import pika
 from database.db_library import DatabaseLibrary, MysqlConnection
-from database.table_classes.archivation_file import ArchivedFile
+from database.archivation_file import ArchivedFile
 from rabbitmq_connection.task_consumer import ConnectionMaker
 
 # from common.exceptions import WrongRecordFormatCustomException - was unused

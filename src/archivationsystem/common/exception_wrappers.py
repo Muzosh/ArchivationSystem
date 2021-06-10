@@ -3,14 +3,14 @@ from functools import wraps
 
 from mysql.connector import errors as mysql_errors
 
-from .exceptions import (
+from common.exceptions import (
+    ArchivationOperationCustomException,
+    CertificateNotValidCustomException,
     DatabaseErrorCustomException,
     DatabaseSyntaxErrorCustomException,
     RecordCanNotBeInsertedCustomException,
     RecordDoesNotExistCustomException,
     WrongRecordFormatCustomException,
-    ArchivationOperationCustomException,
-    CertificateNotValidCustomException,
     WrongTaskCustomException,
 )
 
