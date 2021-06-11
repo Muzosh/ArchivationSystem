@@ -1,14 +1,15 @@
 import json
 import logging
+
+from ..common.exception_wrappers import task_exceptions_wrapper
+from ..common.exceptions import WrongTaskCustomException
+from ..common.setup_logger import setup_logger
+from ..database.db_library import DatabaseLibrary, MysqlConnection
+from ..rabbitmq_connection.task_consumer import ConnectionMaker, TaskConsumer
+from .validator import Validator
+
 # from contextlib import closing - was unused
 
-from common.exception_wrappers import task_exceptions_wrapper
-from common.exceptions import WrongTaskCustomException
-from common.setup_logger import setup_logger
-from database.db_library import DatabaseLibrary, MysqlConnection
-from rabbitmq_connection.task_consumer import ConnectionMaker, TaskConsumer
-
-from validation.validator import Validator
 
 logger = logging.getLogger("Archivation System")
 
@@ -68,9 +69,7 @@ class ValidationWorker:
                 "incorrect task label for validation worker, body: %s",
                 str(body),
             )
-            raise WrongTaskCustomException(
-                "task is not for this worker"
-            )
+            raise WrongTaskCustomException("task is not for this worker")
         files_info = body["files_info"]
         recipients = body["result_recipients"]
         return files_info, recipients

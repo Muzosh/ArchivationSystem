@@ -2,13 +2,15 @@ import json
 import logging
 
 # from contextlib import closing - was unused
-from common.exception_wrappers import task_exceptions_wrapper
-from common.exceptions import WrongTaskCustomException
-from common.setup_logger import setup_logger
-from database.db_library import DatabaseLibrary, MysqlConnection
-from rabbitmq_connection.task_consumer import ConnectionMaker, TaskConsumer
-
-from archivation.archiver import Archiver
+from ..common.exception_wrappers import task_exceptions_wrapper
+from ..common.exceptions import WrongTaskCustomException
+from ..common.setup_logger import setup_logger
+from ..database.db_library import DatabaseLibrary, MysqlConnection
+from ..rabbitmq_connection.task_consumer import (
+    ConnectionMaker,
+    TaskConsumer,
+)
+from .archiver import Archiver
 
 logger = logging.getLogger("Archivation System")
 

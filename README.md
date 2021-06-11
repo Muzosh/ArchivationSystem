@@ -47,7 +47,7 @@
 
 | name                   | purpose                                                                                                                           |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| archivation_task.py    | Manual creation of task for archivation of given file                                                                             |
+| make_archivation_task.py    | Manual creation of task for archivation of given file                                                                             |
 | retimestamping_task.py | Regular checking of timestamps expiration dates in database and creating a task for those which validity is ending within 24 ours |
 | validation_task.py     | Interactive interface for creating tasks for validation of archived files                                                         |
 

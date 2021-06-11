@@ -1,2 +1,1 @@
-from archivation import archiver
-x = 10
+print("Hello world")

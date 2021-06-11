@@ -1,16 +1,15 @@
-import logging
-
 import base64
+import logging
 from contextlib import closing
 from datetime import datetime
 
-# from typing import overload - was unused
-
-from common.exception_wrappers import db_lib_exception_wrapper
-from common.exceptions import RecordDoesNotExistCustomException
 from mysql.connector import MySQLConnection
 
-from database.sql_queries import (
+from ..common.exception_wrappers import db_lib_exception_wrapper
+from ..common.exceptions import RecordDoesNotExistCustomException
+from .archivation_file import ArchivedFile
+from .file_package import FilePackage
+from .sql_queries import (
     QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVED_FILES,
     QUERY_ALL_COLUMNS_ON_FILEID_FILE_PACKAGES,
     QUERY_ALL_COLUMNS_ON_FILEID_FILE_PACKAGES_TOP1,
@@ -20,8 +19,8 @@ from database.sql_queries import (
     QUERY_SELECT_FILEID,
     QUERY_UPDATE_EXPIRATION_DATE_ARCHIVED_FILES,
 )
-from database.archivation_file import ArchivedFile
-from database.file_package import FilePackage
+
+# from typing import overload - was unused
 
 
 logger = logging.getLogger("Archivation System")
@@ -147,9 +146,7 @@ class DatabaseLibrary(object):
         """
 
         record_values = self._execute_select_query(
-            self._get_formated_query_record_archived_files_by_file_id(
-                file_id
-            )
+            self._get_formated_query_record_archived_files_by_file_id(file_id)
         )
         if len(record_values) == 0:
             raise RecordDoesNotExistCustomException(
@@ -172,9 +169,7 @@ class DatabaseLibrary(object):
         else:
             query_f = self._get_formated_query_select_all_c_file_package
 
-        records_values = self._execute_select_query(
-            query_f(archived_file_id)
-        )
+        records_values = self._execute_select_query(query_f(archived_file_id))
         if len(records_values) == 0:
             raise Exception(
                 "NO FILE PACKAGE RECORDS EXISTS FOR GIVEN ARCHIVED_FILE ID"
@@ -197,9 +192,7 @@ class DatabaseLibrary(object):
             raise Exception("NO RECORDS MATCHING GIVEN PARAMERTERS")
         return results[0][0]
 
-    def _get_formated_insert_query_archived_files(
-        self, arch_f: ArchivedFile
-    ):
+    def _get_formated_insert_query_archived_files(self, arch_f: ArchivedFile):
         arch_f.validate_columns()
         return QUERY_INSERT_INTO_ARCHIVED_FILES.format(
             arch_f.FileName,

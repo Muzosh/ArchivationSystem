@@ -5,25 +5,15 @@ import tarfile
 from hashlib import sha512
 
 import rfc3161ng
-from common.exceptions import (
+from cryptography.hazmat.primitives.serialization import Encoding
+
+from ..common import utils as common_utils
+from ..common.exceptions import (
     DigestsNotMatchedCustomException,
     FileNotInDirectoryCustomException,
     TimestampInvalidCustomException,
 )
-from common.utils import (
-    copy_file_to_dir,
-    create_new_dir_in_location,
-    create_tar_file_from_dir,
-    get_certificate,
-    get_current_crl,
-    get_timestamp,
-    hash_file,
-    store_ts_data,
-    validate_certificate,
-    verify_timestamp,
-)
-from cryptography.hazmat.primitives.serialization import Encoding
-from database.file_package import FilePackage
+from ..database.file_package import FilePackage
 
 logger = logging.getLogger("Archivation System")
 
@@ -55,7 +45,7 @@ class Retimestamper:
             pack_id,
         ) = self._verify_existing_package(file_id)
         ts_new = self._create_new_timestamp(storage_dir, actual_package_hash)
-        tar_path = create_tar_file_from_dir(
+        tar_path = common_utils.create_tar_file_from_dir(
             storage_dir,
             os.path.join(storage_dir, "PackageF{}.tar".format(pack_id)),
         )
@@ -93,7 +83,7 @@ class Retimestamper:
         ts, data, tar_package_path = self._get_ts_data_from_package(
             storage_dir
         )
-        actual_package_hash = hash_file(sha512, tar_package_path)
+        actual_package_hash = common_utils.hash_file(sha512, tar_package_path)
 
         logger.debug(
             "[retimestamping] verifying latest package hashes with db record"
@@ -102,7 +92,7 @@ class Retimestamper:
             latest_file_p.PackageHashSha512, actual_package_hash
         )
         logger.debug("[retimestamping] verifying latest timestamp")
-        val = verify_timestamp(ts, data, self.config["TSA_info"])
+        val = common_utils.verify_timestamp(ts, data, self.config["TSA_info"])
         if val is not True:
             logger.exception(
                 "[retimestamping] Last timestamp of package in path %s is"
@@ -120,11 +110,13 @@ class Retimestamper:
 
     def _create_new_timestamp(self, storage_dir, actual_package_hash):
         logger.info("[retimestamping] getting new package timestamp")
-        ts_new = get_timestamp(self.config["TSA_info"], actual_package_hash)
+        ts_new = common_utils.get_timestamp(
+            self.config["TSA_info"], actual_package_hash
+        )
         logger.info(
             "[retimestamping] storing timestamp to storage directory.."
         )
-        store_ts_data(ts_new, storage_dir, "timestamp")
+        common_utils.store_ts_data(ts_new, storage_dir, "timestamp")
         self._store_used_cert_files(storage_dir)
         return ts_new
 
@@ -138,11 +130,15 @@ class Retimestamper:
             "url"
         ]
         self.file_pack_record.IssuingDate = rfc3161ng.get_timestamp(ts_new)
-        cert = get_certificate(self.config["TSA_info"]["tsa_cert_path"])
+        cert = common_utils.get_certificate(
+            self.config["TSA_info"]["tsa_cert_path"]
+        )
         self.file_pack_record.TsaCert = base64.b64encode(
             cert.public_bytes(Encoding.PEM)
         )
-        self.file_pack_record.PackageHashSha512 = hash_file(sha512, tar_path)
+        self.file_pack_record.PackageHashSha512 = common_utils.hash_file(
+            sha512, tar_path
+        )
         logger.info("[retimestamping] File package record filled")
 
     def _get_ts_data_from_package(self, dir_path):
@@ -212,15 +208,17 @@ class Retimestamper:
             "[retimestamping] storing used certificate files to directory: %s",
             str(storage_dir),
         )
-        dir_path = create_new_dir_in_location(storage_dir, "certificate_files")
+        dir_path = common_utils.create_new_dir_in_location(
+            storage_dir, "certificate_files"
+        )
         path_tsa_cert = self.config["TSA_info"]["tsa_cert_path"]
         path_tsa_ca_pem = self.config["TSA_info"]["tsa_ca_pem"]
         tsa_crl_url = self.config["TSA_info"]["tsa_crl_url"]
-        copy_file_to_dir(path_tsa_cert, dir_path, "tsa_cert.crt")
-        copy_file_to_dir(path_tsa_ca_pem, dir_path, "tsa_ca.pem")
-        crl = get_current_crl(tsa_crl_url)
-        validate_certificate(crl, path_tsa_ca_pem)
-        store_ts_data(crl, dir_path, "tsa_cert_crl.crl")
+        common_utils.copy_file_to_dir(path_tsa_cert, dir_path, "tsa_cert.crt")
+        common_utils.copy_file_to_dir(path_tsa_ca_pem, dir_path, "tsa_ca.pem")
+        crl = common_utils.get_current_crl(tsa_crl_url)
+        common_utils.validate_certificate(crl, path_tsa_ca_pem)
+        common_utils.store_ts_data(crl, dir_path, "tsa_cert_crl.crl")
         logger.debug(
             "[retimestamping] certificate files stored in dir of new package"
         )

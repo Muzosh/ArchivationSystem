@@ -13,7 +13,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import asymmetric, hashes, serialization
 from OpenSSL import crypto
 
-from common.exceptions import CertificateNotValidCustomException
+from .exceptions import CertificateNotValidCustomException
 
 
 def store_ts_data(data, path, name):

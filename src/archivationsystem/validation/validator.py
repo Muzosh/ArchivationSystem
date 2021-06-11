@@ -11,7 +11,10 @@ from email.mime.text import MIMEText
 from hashlib import sha512
 from tempfile import TemporaryDirectory
 
-from common.exceptions import (
+from cryptography.exceptions import InvalidSignature
+
+from ..common import utils as common_utils
+from ..common.exceptions import (
     ArchivedFileNotValidCustomException,
     CertificateNotValidCustomException,
     DigestsNotMatchedCustomException,
@@ -22,17 +25,6 @@ from common.exceptions import (
     WrongPathToArchivedFileCustomException,
     WrongTaskCustomException,
 )
-from common.utils import (
-    get_certificate,
-    get_remote_hash,
-    get_sftp_connection,
-    hash_file,
-    load_data,
-    validate_certificate,
-    validate_signature,
-    verify_timestamp,
-)
-from cryptography.exceptions import InvalidSignature
 
 logger = logging.getLogger("Archivation System")
 
@@ -190,7 +182,8 @@ class Validator:
             "[validation] validating package %s hashes with db", str(tar_path)
         )
         self._verify_package_hashes(
-            file_package.PackageHashSha512, hash_file(sha512, tar_path)
+            file_package.PackageHashSha512,
+            common_utils.hash_file(sha512, tar_path),
         )
         pack_path = self._extract_tar_to_temp_dir(
             tar_path, "PackageF", temp_dir
@@ -206,7 +199,7 @@ class Validator:
         self, package_path, temp_dir, file_package, archived_file_rec
     ):
         logger.debug("[validation] getting package1 hash and verifing it")
-        hash_package1 = hash_file(sha512, package_path)
+        hash_package1 = common_utils.hash_file(sha512, package_path)
         self._verify_package_hashes(
             file_package.PackageHashSha512, hash_package1
         )
@@ -217,7 +210,7 @@ class Validator:
 
         logger.debug("[validation] getting package0 hash and verifing it")
         package0_path = self._get_file_path_from_dir(extract_path, "Package0")
-        hash_package0 = hash_file(sha512, package0_path)
+        hash_package0 = common_utils.hash_file(sha512, package0_path)
         self._verify_package_hashes(
             archived_file_rec.Package0HashSha512, hash_package0
         )
@@ -239,7 +232,7 @@ class Validator:
             "[validation] verifying archived file package hash with hash"
             " from database"
         )
-        hash_archived_file = hash_file(
+        hash_archived_file = common_utils.hash_file(
             sha512,
             os.path.join(extrack_pack0_path, archived_file_rec.FileName),
         )
@@ -342,7 +335,7 @@ class Validator:
             "[validation] getting hash of package to verify from path %s",
             str(data_path),
         )
-        data = hash_file(sha512, data_path)
+        data = common_utils.hash_file(sha512, data_path)
         logger.debug("[validation] verifying package timestamp")
         self._verify_timestamp(pack_path, "timestamp", data)
 
@@ -352,10 +345,10 @@ class Validator:
             "[validation] getting hash of signature from path %s",
             str(signature_path),
         )
-        hash_signature = hash_file(sha512, signature_path)
+        hash_signature = common_utils.hash_file(sha512, signature_path)
         self._verify_package_hashes(signature_hash_db, hash_signature)
 
-        signature = load_data(signature_path)
+        signature = common_utils.load_data(signature_path)
         certs_folder_path = os.path.join(extract_path, "certificate_files")
         cert_path = self._get_file_path_from_dir(
             certs_folder_path, "signing_cert.pem"
@@ -363,8 +356,10 @@ class Validator:
         logger.debug(
             "[validation] loading certificate from path %s", str(cert_path)
         )
-        cert = get_certificate(cert_path)
-        validate_signature(signed_data, signature, cert.public_key())
+        cert = common_utils.get_certificate(cert_path)
+        common_utils.validate_signature(
+            signed_data, signature, cert.public_key()
+        )
         logger.debug("[validation] verification of signature was succesful")
         return hash_signature
 
@@ -372,9 +367,11 @@ class Validator:
         logger.debug("[validation] verification of timestamp")
         ts_path = self._get_file_path_from_dir(dir_path, file_name)
         logger.debug("[validation] loading timestamp")
-        ts = load_data(ts_path)
+        ts = common_utils.load_data(ts_path)
         logger.debug("[validation] verifying timestamp")
-        if not (verify_timestamp(ts, data, self.config["TSA_info"])):
+        if not (
+            common_utils.verify_timestamp(ts, data, self.config["TSA_info"])
+        ):
             logger.exception(
                 "[validation] Timestamp invalid, timestamp path: %s",
                 str(ts_path),
@@ -403,9 +400,11 @@ class Validator:
         return os.path.join(dir_path, files[0])
 
     def _verify_certificate_with_crl(self, dir_path, crl_name, cert_name):
-        crl = load_data(os.path.join(dir_path, "certificate_files", crl_name))
+        crl = common_utils.load_data(
+            os.path.join(dir_path, "certificate_files", crl_name)
+        )
         logger.debug("[validation] verifying used certificate with crl")
-        validate_certificate(
+        common_utils.validate_certificate(
             crl, os.path.join(dir_path, "certificate_files", cert_name)
         )
         logger.debug("[validation] verification of certificate successfull")
@@ -414,7 +413,7 @@ class Validator:
         logger.debug("[validation] verifying original file hash with archived")
         if self.config["remote_access"] is False:
             logger.debug("[validation] file should be on local disk")
-            hash_origin = hash_file(sha512, origin_path)
+            hash_origin = common_utils.hash_file(sha512, origin_path)
         else:
             logger.debug("[validation] file should be on remote location disk")
             hash_origin = self._get_remote_file_hash(origin_path)
@@ -436,14 +435,16 @@ class Validator:
             " hash if it still same"
         )
         with closing(
-            get_sftp_connection(self.config["remote_access"])
+            common_utils.get_sftp_connection(self.config["remote_access"])
         ) as sftp_connection:
             logger.debug(
                 "[validation] connection created successfully, getting hash of"
                 " remote file"
             )
             try:
-                return get_remote_hash(sftp_connection, file_path, sha512)
+                return common_utils.get_remote_hash(
+                    sftp_connection, file_path, sha512
+                )
             except Exception:  # as e: - was unused
                 logger.exception(
                     "Unable to get remote file digest",

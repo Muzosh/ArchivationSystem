@@ -1,1 +1,8 @@
-- projet importy a tam, kde se toho importuje hodně, dát jen import X a v kódu pak X.funkce()
+- transfer souborů v bin složce do archivation_system
+    - přejmenovat je
+    - v bin složce vytvořit skripty pro spuštění daných souborů/operací
+        - vytvořit na ně entry entry_points (k tomu použít config_location)?
+        - vytvořit default configy
+- možná třeba spojit soubory do nějakých X_helper.py nebo naopak rozdělit do více modulů
+- move sqlscripts do README nebo docs
+- pořešit instalaci a moving config, data, docs files (ale asi spíš ne)

@@ -7,27 +7,12 @@ from hashlib import sha512
 from uuid import uuid4
 
 import rfc3161ng
-from common.exceptions import FileTransferNotSuccesfullCustomException
-from common.utils import (
-    copy_file_to_dir,
-    create_new_dir_in_location,
-    create_tar_file_from_dir,
-    delete_file,
-    get_certificate,
-    get_current_crl,
-    get_private_key,
-    get_remote_hash,
-    get_sftp_connection,
-    get_timestamp,
-    hash_file,
-    sign_data,
-    store_signature,
-    store_ts_data,
-    validate_certificate,
-)
 from cryptography.hazmat.primitives.serialization import Encoding
-from database.archivation_file import ArchivedFile
-from database.file_package import FilePackage
+
+from ..common import utils as common_utils
+from ..common.exceptions import FileTransferNotSuccesfullCustomException
+from ..database.archivation_file import ArchivedFile
+from ..database.file_package import FilePackage
 
 logger = logging.getLogger("Archivation System")
 
@@ -86,7 +71,7 @@ class Archiver:
         self.file_pack_record.TimeStampingAuthority = self.archivation_config[
             "TSA_info"
         ]["url"]
-        cert = get_certificate(
+        cert = common_utils.get_certificate(
             self.archivation_config["TSA_info"]["tsa_cert_path"]
         )
         self.file_pack_record.TsaCert = base64.b64encode(
@@ -99,14 +84,14 @@ class Archiver:
         path_crl = self.archivation_config["signing_info"]["crl_path"]
         path_tsa_ca_pem = self.archivation_config["TSA_info"]["tsa_ca_pem"]
         tsa_crl_url = self.archivation_config["TSA_info"]["tsa_crl_url"]
-        self.crl = get_current_crl(tsa_crl_url)
-        validate_certificate(self.crl, path_tsa_ca_pem)
+        self.crl = common_utils.get_current_crl(tsa_crl_url)
+        common_utils.validate_certificate(self.crl, path_tsa_ca_pem)
         logger.debug("TSA cert valid")
         with open(
             path_crl, "rb"
         ) as f:  # NOTE: comment if you dont want to use CRL
             crl_s = f.load()  # NOTE: comment if you dont want to use CRL
-        validate_certificate(
+        common_utils.validate_certificate(
             crl_s, path_ca
         )  # NOTE: comment if you dont want to use CRL
         logger.debug("signing cert valid")
@@ -149,7 +134,7 @@ class Archiver:
         package0_tar_path = self._make_tar_package_from_dir_content(
             self.archived_file_rec.PackageStoragePath, "Package0.tar"
         )
-        self.archived_file_rec.Package0HashSha512 = hash_file(
+        self.archived_file_rec.Package0HashSha512 = common_utils.hash_file(
             sha512, package0_tar_path
         )
         logger.info("[archivation] package0 created successfully")
@@ -159,17 +144,17 @@ class Archiver:
         signature = self.__make_signature(
             self.archived_file_rec.Package0HashSha512
         )
-        sig_path = store_signature(
+        sig_path = common_utils.store_signature(
             self.archived_file_rec.PackageStoragePath, signature
         )
         logger.info(
             "[archivation] signature stored in directory witch package0"
         )
-        self.archived_file_rec.SignatureHashSha512 = hash_file(
+        self.archived_file_rec.SignatureHashSha512 = common_utils.hash_file(
             sha512, sig_path
         )
         logger.info("[archivation] getting signing certificate")
-        cert = get_certificate(
+        cert = common_utils.get_certificate(
             self.archivation_config["signing_info"]["certificate_path"]
         )
         self.archived_file_rec.SigningCert = cert.public_bytes(Encoding.PEM)
@@ -191,7 +176,7 @@ class Archiver:
             "[archivation] storing used certificate files and available crls"
             " to archive directory"
         )
-        dir_path = create_new_dir_in_location(
+        dir_path = common_utils.create_new_dir_in_location(
             self.archived_file_rec.PackageStoragePath, "certificate_files"
         )
         path_ca = self.archivation_config["signing_info"]["certificate_path"]
@@ -199,13 +184,13 @@ class Archiver:
         path_tsa_cert = self.archivation_config["TSA_info"]["tsa_cert_path"]
         path_tsa_ca_pem = self.archivation_config["TSA_info"]["tsa_ca_pem"]
 
-        copy_file_to_dir(path_ca, dir_path, "signing_cert.pem")
-        copy_file_to_dir(
+        common_utils.copy_file_to_dir(path_ca, dir_path, "signing_cert.pem")
+        common_utils.copy_file_to_dir(
             path_crl, dir_path, "signing_cert_crl.crl"
         )  # NOTE: comment if you dont want to use CRL
-        copy_file_to_dir(path_tsa_cert, dir_path, "tsa_cert.crt")
-        copy_file_to_dir(path_tsa_ca_pem, dir_path, "tsa_ca.pem")
-        store_ts_data(self.crl, dir_path, "tsa_cert_crl.crl")
+        common_utils.copy_file_to_dir(path_tsa_cert, dir_path, "tsa_cert.crt")
+        common_utils.copy_file_to_dir(path_tsa_ca_pem, dir_path, "tsa_ca.pem")
+        common_utils.store_ts_data(self.crl, dir_path, "tsa_cert_crl.crl")
         logger.info("[archivation] storage certificate files completed")
 
     def _make_final_package(self):
@@ -215,7 +200,7 @@ class Archiver:
         final_tar_path = self._make_tar_package_from_dir_content(
             self.archived_file_rec.PackageStoragePath, "Package1.tar"
         )
-        self.file_pack_record.PackageHashSha512 = hash_file(
+        self.file_pack_record.PackageHashSha512 = common_utils.hash_file(
             sha512, final_tar_path
         )
         logger.info(
@@ -234,17 +219,21 @@ class Archiver:
         except Exception as e:
             logger.warning("unable to write database record of archivation")
             logger.debug("deleting created archived file")
-            delete_file(self.archived_file_rec.PackageStoragePath)
+            common_utils.delete_file(self.archived_file_rec.PackageStoragePath)
             raise e
 
     def _timestamp_data(self, fhash, ts_name):
         logger.debug("getting timestamp for file hash %s", str(fhash))
-        ts = get_timestamp(self.archivation_config["TSA_info"], fhash)
+        ts = common_utils.get_timestamp(
+            self.archivation_config["TSA_info"], fhash
+        )
         logger.debug(
             "[archivation] timestamp recieved successfully, storing timestamp"
             " to archive direcotry"
         )
-        store_ts_data(ts, self.archived_file_rec.PackageStoragePath, ts_name)
+        common_utils.store_ts_data(
+            ts, self.archived_file_rec.PackageStoragePath, ts_name
+        )
         logger.debug("[archivation] ts stored")
         return ts
 
@@ -252,15 +241,15 @@ class Archiver:
         logger.debug(
             "[archivation] getting hash of file on path %s", str(file_path)
         )
-        origin_hash = hash_file(sha512, file_path)
-        copy_dir_path = create_new_dir_in_location(
+        origin_hash = common_utils.hash_file(sha512, file_path)
+        copy_dir_path = common_utils.create_new_dir_in_location(
             self.storage_dir, str(uuid4())
         )
         logger.debug(
             "[archivation] created archivation directory path: %s",
             str(copy_dir_path),
         )
-        self.dst_file_path = copy_file_to_dir(
+        self.dst_file_path = common_utils.copy_file_to_dir(
             file_path, copy_dir_path, self.archived_file_rec.FileName
         )
         logger.debug(
@@ -273,13 +262,15 @@ class Archiver:
         error_count = 0
         try:
             with closing(
-                get_sftp_connection(self.archivation_config["remote_access"])
+                common_utils.get_sftp_connection(
+                    self.archivation_config["remote_access"]
+                )
             ) as sftp_connection:
                 logger.debug("[archivation] sftp connection created")
-                origin_hash = get_remote_hash(
+                origin_hash = common_utils.get_remote_hash(
                     sftp_connection, file_path, sha512
                 )
-                copy_dir_path = create_new_dir_in_location(
+                copy_dir_path = common_utils.create_new_dir_in_location(
                     self.storage_dir, str(uuid4())
                 )
                 logger.debug(
@@ -336,17 +327,17 @@ class Archiver:
             "[archivation] creating tar package on path: %s",
             str(tar_file_path),
         )
-        create_tar_file_from_dir(dir_path, tar_file_path)
+        common_utils.create_tar_file_from_dir(dir_path, tar_file_path)
         return tar_file_path
 
     def __make_signature(self, hash):
         logger.debug("[archivation] getting private key")
-        pk = get_private_key(
+        pk = common_utils.get_private_key(
             self.archivation_config["signing_info"]["private_key_path"],
             self.archivation_config["signing_info"]["pk_password"],
         )
         logger.debug("[archivation] signing data")
-        return sign_data(hash, pk)
+        return common_utils.sign_data(hash, pk)
 
     def _copy_remote_file_to_archive(
         self, connection_sftp, file_path_to_copy, dst_dir
@@ -358,7 +349,7 @@ class Archiver:
         return dst
 
     def _validate_data_transfer(self, hash_origin, dst_file_path):
-        hash_copy = hash_file(sha512, dst_file_path)
+        hash_copy = common_utils.hash_file(sha512, dst_file_path)
         logger.debug(
             "[archivation] hash of origin file: %s \n hash of copy: %s",
             str(hash_origin),

@@ -1,8 +1,10 @@
 import logging
 from datetime import datetime
+
+from ..common.exceptions import WrongRecordFormatCustomException
+
 # from pathlib import Path, PurePath - was unused
 
-from common.exceptions import WrongRecordFormatCustomException
 
 logger = logging.getLogger("Archivation System")
 
