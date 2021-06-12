@@ -1,8 +1,8 @@
 import sys
 from pathlib import Path, PurePath
 
-from common.yaml_parser import parse_yaml_config
-from validation.validation_worker import run_worker
+from archivationsystem.common.yaml_parser import parse_yaml_config
+from archivationsystem.validation.validation_worker import run_worker
 
 
 def raise_system_exit():

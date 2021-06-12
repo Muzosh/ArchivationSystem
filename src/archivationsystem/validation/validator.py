@@ -288,8 +288,8 @@ class Validator:
                 email=self.config["contact"]["email"],
                 phone=self.config["contact"]["phone"],
             )
-        text_massage = MIMEText(text, "plain")
-        msg.attach(text_massage)
+        text_message = MIMEText(text, "plain")
+        msg.attach(text_message)
         context = ssl._create_unverified_context()
         with smtplib.SMTP_SSL(
             self.config["contact"]["email_server"], 465, context=context

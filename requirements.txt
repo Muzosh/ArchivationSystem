@@ -1,3 +1,4 @@
+# project specific
 pika==1.2.0
 rfc3161ng==2.1.3
 pyyaml==5.4.1
@@ -8,3 +9,8 @@ mysql-connector-python==8.0.24
 paramiko==2.6.0
 requests==2.22.0
 python-logging-rabbitmq==2.0.0  
+
+# recommended for linting, formatting and refactoring
+flake8
+black
+rope

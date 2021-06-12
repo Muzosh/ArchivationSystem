@@ -43,7 +43,7 @@ class ConnectionMaker(object):
             CA_file: str-path
             CA_path: str-path
             CA_data: str-path
-        } //or false
+        } or false
         """
         logger.debug("[rabbimq_connection_maker] mapping values from config")
         self.__host = self.config.get("host")
@@ -52,7 +52,7 @@ class ConnectionMaker(object):
         self.__credentials: dict = self.config.get("credentials")
         self.__enable_ssl = self.config.get("enable_ssl")
 
-    def __set_credentials(self):
+    def __get_credentials(self):
         return pika.PlainCredentials(
             self.__credentials.get("name"),
             self.__credentials.get("password"),
@@ -60,7 +60,7 @@ class ConnectionMaker(object):
         )
 
     def __setup_ssl(self):
-        logger.debug("[rabbimq_connection_maker] setting up ssl configuration")
+        logger.debug("[ConnectionMaker] setting up ssl configuration")
         if self.__enable_ssl is False:
             return None
         ssl_context = ssl.create_default_context(
@@ -94,7 +94,7 @@ class ConnectionMaker(object):
             host=self.__host,
             port=self.__port,
             virtual_host=self.__virtual_host,
-            credentials=self.__set_credentials(),
+            credentials=self.__get_credentials(),
             ssl_options=self.__setup_ssl() if self.__enable_ssl else None,
         )
         logger.debug("[rabbimq_connection_maker] creating blocking connection")

@@ -29,16 +29,16 @@ def make_task(channel, queue, task_message):
 
 
 def publish_retimestamping_tasks(
-    files_to_retimestamp: list, config_rabbit: dict
+    files_to_retimestamp: list, config: dict
 ):
-    c_maker = ConnectionMaker(config_rabbit.get("rabbitmq_connection"))
+    c_maker = ConnectionMaker(config.get("rabbitmq_connection"))
     connection = c_maker.make_connection()
     channel = connection.channel()
 
     for file_to_ret in files_to_retimestamp:
         make_task(
             channel,
-            config_rabbit["rabbitmq_info"].get("task_queue"),
+            config["rabbitmq_info"].get("task_queue"),
             format_task_message(file_to_ret),
         )
     channel.close()

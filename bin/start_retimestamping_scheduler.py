@@ -3,9 +3,9 @@ from pathlib import Path  # , PurePath - was unused
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from common.yaml_parser import parse_yaml_config
-from retimestamping.retimestamping_checker import (
-    checker_controller,
+from archivationsystem.common.yaml_parser import parse_yaml_config
+from archivationsystem.retimestamping.retimestamping_checker import (
+    checker_controller
 )
 
 

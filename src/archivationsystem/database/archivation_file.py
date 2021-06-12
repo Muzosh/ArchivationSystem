@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from ..exceptions import WrongRecordFormatCustomException
+from ..common.exceptions import WrongRecordFormatCustomException
 
 # from pathlib import Path, PurePath - was unused
 

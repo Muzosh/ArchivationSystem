@@ -14,7 +14,7 @@ def format_task_message(files_info: list, recipients: list):
     task_message = {
         "task": "Validation",
         "files_info": files_info,
-        "result_recipients": list(recipients),
+        "result_recipients": list(recipients),  # ? why list(list)?
     }
     return json.dumps(task_message)
 
@@ -102,7 +102,7 @@ def get_file_info_from_file():
 
 def parse_yaml_data_to_list(file_info_yaml):
     list_data = set()
-    list_data.update(file_info_yaml["files_id"])
+    list_data.update(file_info_yaml["file_ids"])
     for file in file_info_yaml["files"]:
         list_data.add(tuple([file["file_name"], file["file_owner"]]))
     return list_data
@@ -181,7 +181,6 @@ def parse_arguments(args):
 
 
 def main():
-
     config_path = parse_arguments(sys.argv[1:])
     parsed_config = parse_yaml_config(config_path)
     files_info, recipients = interface()

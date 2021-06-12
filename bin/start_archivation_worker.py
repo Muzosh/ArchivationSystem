@@ -1,8 +1,8 @@
 import sys
 from pathlib import Path, PurePath
 
-from common.yaml_parser import parse_yaml_config
-from retimestamping.retimestamping_worker import run_worker
+from archivationsystem.archivation.archivation_worker import run_worker
+from archivationsystem.common.yaml_parser import parse_yaml_config
 
 
 def raise_system_exit():
@@ -27,7 +27,7 @@ def parse_arguments(args):
 
 def main():
     """
-    takes 1 system arguments:
+    takes 1 system argument:
         -c | --config   => configuration file for worker
     """
     config_path = parse_arguments(sys.argv[1:])
