@@ -1,1 +1,1 @@
-flake8 --exclude pyvenv,bin,tests .
+flake8 --exclude pyvenv,tests,bin/temp* .
