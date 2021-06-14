@@ -11,6 +11,11 @@
     - ne všechny, ale u některých je to potřeba
 - na konci možná dát configs do /etc/archivationsystem/config?
 
+# Bezpečnostní změny
+- `"".format()` údajně umožňuje se dostat ke globals např. přes `"{person.__init__.__globals__[CONFIG][API_KEY]}".format(person)`
+- odebrat relativní importy (někdo si tam může dosadit vlastní package)
+    - nicméně k tomu by potřeboval přístup do systému a tím pádem by i tak byl schopen upravit existující package
+
 # Dokumentace
 - přesunout sqlscripts do docs a odkázat se na ně v README
 - dopsat do README instalaci archivationsystem balíku
