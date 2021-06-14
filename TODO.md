@@ -2,8 +2,8 @@
 - u logování upravit pojmy v hranatých závorkách tak, aby to odráželo, z jaké třídy nebo z jakého modulu se to volá
 - u té manuální validace s výsledkem do mailu:
     - výběr je založen na základě znalost jména souboru, jména vlastníka nebo pokud člověk dokonce zná ID v DB
-    - asi by bylo fajn ještě přidat např. "zvaliduj posledních X souborů!
-    - ještě lépe to pak zautomatizovat
+    - asi by bylo fajn ještě přidat např. "zvaliduj posledních X souborů"
+    - ještě to pak třeba zautomatizovat
 
 # Strukturální změny
 - možná třeba spojit soubory do nějakých X_helper.py nebo naopak rozdělit do více modulů

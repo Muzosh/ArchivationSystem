@@ -128,16 +128,16 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        "pika",
-        "rfc3161ng",
-        "pyyaml",
-        "cryptography",
-        "pyopenssl",
-        "apscheduler",
-        "mysql-connector-python",
-        "paramiko",
-        "requests",
-        "python-logging-rabbitmq",
+        "pika==1.2.0",
+        "rfc3161ng==2.1.3",
+        "pyyaml==5.4.1",
+        "cryptography==3.4.7",
+        "pyopenssl==20.0.1",
+        "apscheduler==3.7.0",
+        "mysql-connector-python==8.0.25",
+        "paramiko==2.7.2",
+        "requests==2.25.1",
+        "python-logging-rabbitmq==2.0.0"
     ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
