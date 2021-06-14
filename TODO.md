@@ -1,9 +1,5 @@
 # Funkční/logické změny
 - u logování upravit pojmy v hranatých závorkách tak, aby to odráželo, z jaké třídy nebo z jakého modulu se to volá
-- u té manuální validace s výsledkem do mailu:
-    - výběr je založen na základě znalost jména souboru, jména vlastníka nebo pokud člověk dokonce zná ID v DB
-    - asi by bylo fajn ještě přidat např. "zvaliduj posledních X souborů"
-    - ještě to pak třeba zautomatizovat
 
 # Strukturální změny
 - možná třeba spojit soubory do nějakých X_helper.py nebo naopak rozdělit do více modulů
@@ -13,6 +9,7 @@
     - oddělit od TaskConsumera
 - projet variables v celém projektu a trochu je upravit tak, aby odrážely to, co v sobě mají uložené
     - ne všechny, ale u některých je to potřeba
+- na konci možná dát configs do /etc/archivationsystem/config?
 
 # Dokumentace
 - přesunout sqlscripts do docs a odkázat se na ně v README
@@ -21,9 +18,17 @@
 # Návrhy
 - některé configy jsou duplicitní a vždy budou stejné
     - např. TSA se využívá u archivation i retimestamping, bude to někdy potřeba rozdílné? 
-
-
-
+- u té manuální validace s výsledkem do mailu:
+    - výběr je založen na základě znalost jména souboru, jména vlastníka nebo pokud člověk dokonce zná ID v DB
+    - asi by bylo fajn ještě přidat např. "zvaliduj posledních X souborů"
+    - ještě to pak třeba zautomatizovat
+- možná z rabbitmq přejít na Twisted, vypadá to jednoduššeji
+    - má v sobě dohromady:
+        - echo server
+        - web server
+        - publish/subscribe servery+klienty (tohle by mohlo nahradit rabbitmq)
+        - mail client (na posílání reportu z validation)
+        - SSH client (pokud by archivační systém běžel na jiném stroji?)
 
 
 
