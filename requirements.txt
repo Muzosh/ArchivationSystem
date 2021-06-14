@@ -10,10 +10,11 @@ paramiko==2.7.2
 requests==2.25.
 python-logging-rabbitmq==2.0.0
 
-# recommended for linting, formatting and refactoring
+# recommended for linting, formatting, refactoring and security linting
 flake8
 black
 rope
+bandit
 
 # not available in PyPI - need to be installed locally, see README
 # archivationsystem
