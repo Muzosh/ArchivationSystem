@@ -14,7 +14,7 @@
 # Bezpečnostní změny
 - `"".format()` údajně umožňuje se dostat ke globals např. přes `"{person.__init__.__globals__[CONFIG][API_KEY]}".format(person)`
 - odebrat relativní importy (někdo si tam může dosadit vlastní package)
-    - nicméně k tomu by potřeboval přístup do systému a tím pádem by i tak byl schopen upravit existující package
+    - nicméně k tomu by potřeboval přístup do systému a tím pádem by i tak byl schopen upravit existující package?
 
 # Dokumentace
 - přesunout sqlscripts do docs a odkázat se na ně v README
@@ -34,6 +34,3 @@
         - publish/subscribe servery+klienty (tohle by mohlo nahradit rabbitmq)
         - mail client (na posílání reportu z validation)
         - SSH client (pokud by archivační systém běžel na jiném stroji?)
-
-
-
