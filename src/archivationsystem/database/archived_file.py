@@ -49,62 +49,70 @@ class ArchivedFile(object):
 
     def validate_columns(self):
         error = False
-        logger.debug("[db_record] starting validation of record")
+        logger.debug("[ArchivedFile.validate_columns] starting validation")
         if not isinstance(self.FileName, str):
             logger.exception(
-                "[db_record] wrong type of FileName: %s",
+                "[ArchivedFile.validate_columns] wrong type of FileName: %s",
                 str(type(self.FileName)),
             )
             error = True
         if not isinstance(self.OriginalFilePath, str):
             logger.exception(
-                "[db_record] wrong type of OriginalFilePath: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " OriginalFilePath: %s",
                 str(type(self.OriginalFilePath)),
             )
             error = True
         if not isinstance(self.PackageStoragePath, str):
             logger.exception(
-                "[db_record] wrong type of PackageStoragePath: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " PackageStoragePath: %s",
                 str(type(self.PackageStoragePath)),
             )
             error = True
         if not isinstance(self.OriginFileHashSha512, bytes):
             logger.exception(
-                "[db_record] wrong type of OriginFileHashSha512: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " OriginFileHashSha512: %s",
                 str(type(self.OriginFileHashSha512)),
             )
             error = True
         if not isinstance(self.TimeOfFirstTS, datetime):
             logger.exception(
-                "[db_record] wrong type of TimeOfFirstTS: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " TimeOfFirstTS: %s",
                 str(type(self.TimeOfFirstTS)),
             )
             error = True
 
         if not isinstance(self.SigningCert, bytes):
             logger.exception(
-                "[db_record] wrong type of SigningCert: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " SigningCert: %s",
                 str(type(self.SigningCert)),
             )
             error = True
 
         if not isinstance(self.SignatureHashSha512, bytes):
             logger.exception(
-                "[db_record] wrong type of SignatureHashSha512: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " SignatureHashSha512: %s",
                 str(type(self.SignatureHashSha512)),
             )
             error = True
 
         if not isinstance(self.Package0HashSha512, bytes):
             logger.exception(
-                "[db_record] wrong type of Package0HashSha512: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " Package0HashSha512: %s",
                 str(type(self.Package0HashSha512)),
             )
             error = True
 
         if not isinstance(self.ExpirationDateTS, datetime):
             logger.exception(
-                "[db_record] wrong type of ExpirationDateTS: %s",
+                "[ArchivedFile.validate_columns] wrong type of"
+                " ExpirationDateTS: %s",
                 str(type(self.ExpirationDateTS)),
             )
             error = True

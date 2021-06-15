@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import pika
 
-from ..database.archivation_file import ArchivedFile
+from ..database.archived_file import ArchivedFile
 from ..database.db_library import DatabaseLibrary, MysqlConnection
 from ..rabbitmq_connection.task_consumer import ConnectionMaker
 

@@ -7,7 +7,7 @@ from mysql.connector import MySQLConnection
 
 from ..common.exception_wrappers import db_lib_exception_wrapper
 from ..common.exceptions import RecordDoesNotExistCustomException
-from .archivation_file import ArchivedFile
+from .archived_file import ArchivedFile
 from .file_package import FilePackage
 from .sql_queries import (
     QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVED_FILES,
@@ -197,13 +197,13 @@ class DatabaseLibrary(object):
         return QUERY_INSERT_INTO_ARCHIVED_FILES.format(
             arch_f.FileName,
             arch_f.OwnerName,
-            str(arch_f.OriginalFilePath),
-            str(arch_f.PackageStoragePath),
-            repr(base64.b64encode(arch_f.OriginFileHashSha512))[1:],
+            arch_f.OriginalFilePath,
+            arch_f.PackageStoragePath,
+            repr(base64.b64encode(arch_f.OriginFileHashSha512).decode()),
             arch_f.TimeOfFirstTS.strftime("%Y-%m-%d %H:%M:%S"),
-            repr(base64.b64encode(arch_f.SigningCert))[1:],
-            repr(base64.b64encode(arch_f.SignatureHashSha512))[1:],
-            repr(base64.b64encode(arch_f.Package0HashSha512))[1:],
+            repr(base64.b64encode(arch_f.SigningCert).decode()),
+            repr(base64.b64encode(arch_f.SignatureHashSha512).decode()),
+            repr(base64.b64encode(arch_f.Package0HashSha512).decode()),
             arch_f.ExpirationDateTS.strftime("%Y-%m-%d %H:%M:%S"),
         )
 
@@ -229,8 +229,8 @@ class DatabaseLibrary(object):
             file_p.ArchivedFileID,
             file_p.TimeStampingAuthority,
             file_p.IssuingDate.strftime("%Y-%m-%d %H:%M:%S"),
-            repr(base64.b64encode(file_p.TsaCert))[1:],
-            repr(base64.b64encode(file_p.PackageHashSha512))[1:],
+            repr(base64.b64encode(file_p.TsaCert).decode()),
+            repr(base64.b64encode(file_p.PackageHashSha512).decode()),
         )
 
     def _get_formated_query_select_all_c_file_package(self, file_id):

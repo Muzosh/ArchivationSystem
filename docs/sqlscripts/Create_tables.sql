@@ -1,5 +1,5 @@
 -- Create tables
-use ArchivationSystemDB;
+use archivationsystem;
 CREATE table ArchivedFiles(
 	FileID int NOT NULL AUTO_INCREMENT UNIQUE,
 	FileName NVARCHAR(255) NOT NULL,

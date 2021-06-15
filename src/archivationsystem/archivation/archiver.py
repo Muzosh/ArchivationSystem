@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives.serialization import Encoding
 
 from ..common import utils as common_utils
 from ..common.exceptions import FileTransferNotSuccesfullCustomException
-from ..database.archivation_file import ArchivedFile
+from ..database.archived_file import ArchivedFile
 from ..database.file_package import FilePackage
 
 logger = logging.getLogger("Archivation System")

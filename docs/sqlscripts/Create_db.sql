@@ -1,5 +1,5 @@
 -- Create Database and user
-CREATE DATABASE ArchivationSystemDB;
-CREATE USER 'test_user' @'localhost' IDENTIFIED BY 'Password1';
-GRANT ALL PRIVILEGES ON ArchivationSystemDB.* TO 'test_user' @'localhost';
+CREATE DATABASE archivationsystem;
+CREATE USER 'ncadmin'@'localhost' IDENTIFIED BY 'ncadmin';
+GRANT ALL PRIVILEGES ON archivationsystem.* TO 'ncadmin'@'localhost';
 FLUSH PRIVILEGES;
