@@ -29,8 +29,8 @@ class Retimestamper:
     in example_config and it retimestamping_info part
     """
 
-    def __init__(self, db_lib, config: dict):
-        self.db_lib = db_lib
+    def __init__(self, db_handler, config: dict):
+        self.db_handler = db_handler
         self.config = config
         self.file_pack_record = FilePackage()
 
@@ -55,13 +55,13 @@ class Retimestamper:
             "[retimestamping] updating archived record with latest"
             " expiration date"
         )
-        self.db_lib.update_expiration_date_specific_record(
+        self.db_handler.update_expiration_date_ts(
             file_id, self._get_expiration_date(ts_new)
         )
         logger.info(
             "[retimestamping] inserting file package record into database"
         )
-        self.db_lib.create_new_record_FilePackages(self.file_pack_record)
+        self.db_handler.create_new_record_FilePackages(self.file_pack_record)
         return "OK"  # or exception
 
     def _verify_existing_package(self, file_id):
@@ -69,13 +69,13 @@ class Retimestamper:
         logger.debug(
             "[retimestamping] getting arichivated file record from db"
         )
-        arch_f = self.db_lib.get_specific_ArchivedFile_record_by_FileId(
+        arch_f = self.db_handler.get_specific_ArchivedFile_record_by_FileId(
             file_id
         )
         logger.debug(
             "[retimestamping] getting latest package file record from db"
         )
-        latest_file_p = self.db_lib.get_FilePackages_records(
+        latest_file_p = self.db_handler.get_FilePackages_records(
             file_id, latest=True
         )
         storage_dir = arch_f.PackageStoragePath

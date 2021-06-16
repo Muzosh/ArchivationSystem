@@ -1,15 +1,21 @@
 # Funkční/logické změny
 - u logování upravit pojmy v hranatých závorkách tak, aby to odráželo, z jaké třídy nebo z jakého modulu se to volá
-
+- všechny operace dát do jednoho DB contextu a zajistit revertibilitu v případě chyby
+- po provedení archivace pravděpodobně budeme chtít původní soubory smazat (s tím souvisí i další bod šifrování)
+- je třeba vyřešit nějak šifrování - momentálně se ukládá soubor zašifrovaný nextcloudem, co klíče?
+- archivationsystem databáze:
+    - db_library neposkytuje možnost záznamy z tabulky mazat - to je možná dobře? pro údržbu je to možná špatně
+    - v DB.ArchivedFile se na kombinaci FileName+Owner nahlíží jako na UNIQUE constraint - to je možná až moc omezující, možná bych dal jen FilePath UNIQUE, pokud opravdu chceme zamezit znovu-archivování stejného souboru
 # Strukturální změny
 - možná třeba spojit soubory do nějakých X_helper.py nebo naopak rozdělit do více modulů
 - dát více duplicitních věcí do common
     - např. parsování argumentů v start_X?
 - ConnectionMaker dát do samotného modulu
     - oddělit od TaskConsumera
-- projet variables v celém projektu a trochu je upravit tak, aby odrážely to, co v sobě mají uložené
+- projet variables v celém projektu a trochu je upravit tak, aby lépe odrážely to, co v sobě mají uložené
     - ne všechny, ale u některých je to potřeba
 - na konci možná dát configs do /etc/archivationsystem/config?
+- database.db_library: _get_formated_XXX jsou možná zbytečné
 
 # Bezpečnostní změny
 - `"".format()` údajně umožňuje se dostat ke globals např. přes `"{person.__init__.__globals__[CONFIG][API_KEY]}".format(person)`

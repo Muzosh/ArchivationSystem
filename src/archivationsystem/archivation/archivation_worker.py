@@ -5,7 +5,7 @@ import logging
 from ..common.exception_wrappers import task_exceptions_wrapper
 from ..common.exceptions import WrongTaskCustomException
 from ..common.setup_logger import setup_logger
-from ..database.db_library import DatabaseLibrary, MysqlConnection
+from ..database.db_library import DatabaseHandler, MysqlConnection
 from ..rabbitmq_connection.task_consumer import (
     ConnectionMaker,
     TaskConsumer,
@@ -54,8 +54,8 @@ class ArchivationWorker:
 
         logger.debug("[archivation_worker] creation of database connection")
         with MysqlConnection(self.db_config) as db_connection:
-            db_lib = DatabaseLibrary(db_connection)
-            archiver = Archiver(db_lib, self.archivation_config)
+            db_handler = DatabaseHandler(db_connection)
+            archiver = Archiver(db_handler, self.archivation_config)
             path, owner = self._parse_message_body(body)
             logger.info(
                 "[archivation_worker] executing archivation of file, path: %s"

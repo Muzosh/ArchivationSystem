@@ -4,7 +4,7 @@ import logging
 from ..common.exception_wrappers import task_exceptions_wrapper
 from ..common.exceptions import WrongTaskCustomException
 from ..common.setup_logger import setup_logger
-from ..database.db_library import DatabaseLibrary, MysqlConnection
+from ..database.db_library import DatabaseHandler, MysqlConnection
 from ..rabbitmq_connection.task_consumer import ConnectionMaker, TaskConsumer
 from .retimestamper import Retimestamper
 
@@ -53,8 +53,8 @@ class RetimestampingWorker:
 
         logger.debug("[retimestamping_worker] creation of database connection")
         with MysqlConnection(self.db_config) as db_connection:
-            db_lib = DatabaseLibrary(db_connection)
-            retimestamper = Retimestamper(db_lib, self.retimestamping_config)
+            db_handler = DatabaseHandler(db_connection)
+            retimestamper = Retimestamper(db_handler, self.retimestamping_config)
             file_id = self._parse_message_body(body)
             logger.info(
                 "[retimestamping_worker] executing retimestamping of file"

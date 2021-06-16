@@ -20,7 +20,7 @@ from .exceptions import (
 logger = logging.getLogger("Archivation System")
 
 
-def db_lib_exception_wrapper(function):
+def db_handler_exception_wrapper(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
         try:

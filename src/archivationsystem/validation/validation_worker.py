@@ -4,7 +4,7 @@ import logging
 from ..common.exception_wrappers import task_exceptions_wrapper
 from ..common.exceptions import WrongTaskCustomException
 from ..common.setup_logger import setup_logger
-from ..database.db_library import DatabaseLibrary, MysqlConnection
+from ..database.db_library import DatabaseHandler, MysqlConnection
 from ..rabbitmq_connection.task_consumer import ConnectionMaker, TaskConsumer
 from .validator import Validator
 
@@ -51,8 +51,8 @@ class ValidationWorker:
 
         logger.debug("[validation_worker] creation of database connection")
         with MysqlConnection(self.db_config) as db_connection:
-            db_lib = DatabaseLibrary(db_connection)
-            validator = Validator(db_lib, self.validation_config)
+            db_handler = DatabaseHandler(db_connection)
+            validator = Validator(db_handler, self.validation_config)
             files_info, recipients = self._parse_message_body(body)
             logger.info(
                 "[validation_worker] executing validation of file: %s",

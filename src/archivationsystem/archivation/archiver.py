@@ -29,8 +29,8 @@ class Archiver:
     in example_config and it needs archivation_system_info part
     """
 
-    def __init__(self, db_lib, config: dict):
-        self.db_lib = db_lib
+    def __init__(self, db_handler, config: dict):
+        self.db_handler = db_handler
         self.archivation_config = config
         self.archived_file_rec = ArchivedFile()
         self.file_pack_record = FilePackage()
@@ -212,7 +212,7 @@ class Archiver:
             "[archivation] writing records with gathered data to database"
         )
         try:
-            self.db_lib.add_full_records(
+            self.db_handler.add_full_records(
                 archf_data=self.archived_file_rec,
                 filep_data=self.file_pack_record,
             )

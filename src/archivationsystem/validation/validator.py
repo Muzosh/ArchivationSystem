@@ -41,8 +41,8 @@ class Validator:
     in example_config and it needs validation_info part
     """
 
-    def __init__(self, db_lib, config: dict):
-        self.db_lib = db_lib
+    def __init__(self, db_handler, config: dict):
+        self.db_handler = db_handler
         self.config = config
 
     def validate(self, file_info, recipients):
@@ -95,11 +95,11 @@ class Validator:
             "[validation] archived file info from task %s", str(file_info)
         )
         if file_info.isdigit():
-            return self.db_lib.get_specific_ArchivedFile_record_by_FileId(
+            return self.db_handler.get_specific_ArchivedFile_record_by_FileId(
                 int(file_info)
             )
         elif isinstance(file_info, tuple):
-            return self.db_lib.get_fileID_ArchivedFile_rec(
+            return self.db_handler.get_fileID_ArchivedFile_rec(
                 file_info[1], file_info[0]
             )
         logger.warning("[validation] Wrong task format for validation")
@@ -110,7 +110,7 @@ class Validator:
             "[validation] getting all file package records associated with"
             " archived file"
         )
-        file_recs = self.db_lib.get_FilePackages_records(file_id)
+        file_recs = self.db_handler.get_FilePackages_records(file_id)
         file_recs.sort(key=lambda x: x.IssuingDate, reverse=True)
         return file_recs
 

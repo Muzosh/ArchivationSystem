@@ -5,7 +5,7 @@ from uuid import uuid4
 import pika
 
 from ..database.archived_file import ArchivedFile
-from ..database.db_library import DatabaseLibrary, MysqlConnection
+from ..database.db_library import DatabaseHandler, MysqlConnection
 from ..rabbitmq_connection.task_consumer import ConnectionMaker
 
 # from common.exceptions import WrongRecordFormatCustomException - was unused
@@ -28,9 +28,7 @@ def make_task(channel, queue, task_message):
     )
 
 
-def publish_retimestamping_tasks(
-    files_to_retimestamp: list, config: dict
-):
+def publish_retimestamping_tasks(files_to_retimestamp: list, config: dict):
     c_maker = ConnectionMaker(config.get("rabbitmq_connection"))
     connection = c_maker.make_connection()
     channel = connection.channel()
@@ -48,17 +46,17 @@ def publish_retimestamping_tasks(
 def get_files_to_retimestamp(db_config):
     files_to_retimestamp = set()
     with MysqlConnection(db_config) as db_connection:
-        db_api = DatabaseLibrary(db_connection)
-        file_ids = db_api.get_all_file_id()
+        db_handler = DatabaseHandler(db_connection)
+        file_ids = db_handler.get_all_file_id()
         for f_id in file_ids:
-            file_rec = get_file_rec(f_id, db_api)
+            file_rec = get_file_rec(f_id, db_handler)
             if compare_expiration_date(file_rec):
                 files_to_retimestamp.add(f_id)
     return list(files_to_retimestamp)
 
 
-def get_file_rec(file_id, db_api: DatabaseLibrary):
-    return db_api.get_specific_archived_file_record_by_file_id(file_id)
+def get_file_rec(file_id, db_handler: DatabaseHandler):
+    return db_handler.get_specific_archived_file_record_by_file_id(file_id)
 
 
 def compare_expiration_date(file_rec: ArchivedFile):
