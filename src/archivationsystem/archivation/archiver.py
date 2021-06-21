@@ -14,7 +14,7 @@ from ..common.exceptions import FileTransferNotSuccesfullCustomException
 from ..database.archived_file import ArchivedFile
 from ..database.file_package import FilePackage
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 class Archiver:
@@ -81,20 +81,22 @@ class Archiver:
     def _validate_certificates(self):
         logger.info("validation certificates")
         path_ca = self.archivation_config["signing_info"]["certificate_path"]
-        path_crl = self.archivation_config["signing_info"]["crl_path"]
+        # path_crl = self.archivation_config["signing_info"]["crl_path"]
         path_tsa_ca_pem = self.archivation_config["TSA_info"]["tsa_ca_pem"]
         tsa_crl_url = self.archivation_config["TSA_info"]["tsa_crl_url"]
-        self.crl = common_utils.get_current_crl(tsa_crl_url)
-        common_utils.validate_certificate(self.crl, path_tsa_ca_pem)
-        logger.debug("TSA cert valid")
-        with open(
-            path_crl, "rb"
-        ) as f:  # NOTE: comment if you dont want to use CRL
-            crl_s = f.load()  # NOTE: comment if you dont want to use CRL
+        self.tsa_current_crl = common_utils.get_current_crl(tsa_crl_url)
         common_utils.validate_certificate(
-            crl_s, path_ca
-        )  # NOTE: comment if you dont want to use CRL
-        logger.debug("signing cert valid")
+            self.tsa_current_crl, path_tsa_ca_pem
+        )
+        logger.debug("TSA cert valid")
+        # with open(  # used for own CRL validation
+        #     path_crl, "rb"
+        # ) as f:
+        #     crl_s = f.load()
+        # common_utils.validate_certificate(
+        #     crl_s, path_ca
+        # )
+        # logger.debug("signing cert valid")
 
     def _transfer_file(self, file_path):
         if self.archivation_config["remote_access"] is False:
@@ -180,17 +182,19 @@ class Archiver:
             self.archived_file_rec.PackageStoragePath, "certificate_files"
         )
         path_ca = self.archivation_config["signing_info"]["certificate_path"]
-        path_crl = self.archivation_config["signing_info"]["crl_path"]
+        # path_crl = self.archivation_config["signing_info"]["crl_path"]
         path_tsa_cert = self.archivation_config["TSA_info"]["tsa_cert_path"]
         path_tsa_ca_pem = self.archivation_config["TSA_info"]["tsa_ca_pem"]
 
         common_utils.copy_file_to_dir(path_ca, dir_path, "signing_cert.pem")
-        common_utils.copy_file_to_dir(
-            path_crl, dir_path, "signing_cert_crl.crl"
-        )  # NOTE: comment if you dont want to use CRL
+        # common_utils.copy_file_to_dir(  # used for own CRL validation
+        #     path_crl, dir_path, "signing_cert_crl.crl"
+        # )
         common_utils.copy_file_to_dir(path_tsa_cert, dir_path, "tsa_cert.crt")
         common_utils.copy_file_to_dir(path_tsa_ca_pem, dir_path, "tsa_ca.pem")
-        common_utils.store_ts_data(self.crl, dir_path, "tsa_cert_crl.crl")
+        common_utils.store_ts_data(
+            self.tsa_current_crl, dir_path, "tsa_cert_crl.crl"
+        )
         logger.info("[archivation] storage certificate files completed")
 
     def _make_final_package(self):

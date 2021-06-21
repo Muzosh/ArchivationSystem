@@ -17,7 +17,7 @@ from .exceptions import (
 # from requests.exceptions import ConnectionError - was unused
 
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 def db_handler_exception_wrapper(function):

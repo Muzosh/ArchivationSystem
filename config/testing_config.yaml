@@ -1,10 +1,10 @@
 rabbitmq_connection: #connection parameters for connecting to rabbitmq
   host: "localhost"
-  virtual_host: "/"
+  virtual_host: "archivationsystem"
   port: "5672"
   credentials:
-    name: guest
-    password: guest #default credentials
+    name: "ncadmin"
+    password: "ncadmin" #default credentials
   enable_ssl:
     false #remove false if you want to use paramaters below. You have to use all of them
     #Server_name_id: str #optional
@@ -17,8 +17,8 @@ rabbitmq_connection: #connection parameters for connecting to rabbitmq
 rabbitmq_logging: #connection parameters for connecting logger to rabbitmq where will be logs sent
   host: "localhost"
   port: "5672"
-  username: guest
-  password: guest #default credentials
+  username: "ncadmin"
+  password: "ncadmin" #default credentials
 
 rabbitmq_info:
   consumer_ID: "Archivator" #queue for control task for worker

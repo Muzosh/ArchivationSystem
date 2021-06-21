@@ -12,7 +12,7 @@ from ..rabbitmq_connection.task_consumer import (
 )
 from .archiver import Archiver
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 class ArchivationWorker:
@@ -69,7 +69,7 @@ class ArchivationWorker:
 
     def _parse_message_body(self, body):
         body = json.loads(body)
-        if not body.get("task") == "Archivation":
+        if not body.get("task") == "archive":
             logger.warning(
                 "incorrect task label for archivation worker, body: %s",
                 str(body),

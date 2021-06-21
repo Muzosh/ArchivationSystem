@@ -12,7 +12,7 @@ from archivationsystem.rabbitmq_connection.task_consumer import ConnectionMaker
 
 def format_task_message(files_info: list, recipients: list):
     task_message = {
-        "task": "Validation",
+        "task": "validate",
         "files_info": files_info,
         "result_recipients": list(recipients),  # ? why list(list)?
     }
@@ -24,7 +24,7 @@ def make_task(channel, queue, task_message):
     channel.basic_publish(
         exchange="",
         routing_key=queue,
-        properties=pika.BasicProperties(correlation_id=str(uuid4)),
+        properties=pika.BasicProperties(correlation_id=str(uuid4())),
         body=task_message,
     )
 

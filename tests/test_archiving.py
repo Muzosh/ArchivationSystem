@@ -1,6 +1,9 @@
-from archivation.archiver import Archiver
-from common.yaml_parser import parse_yaml_config
-from database.db_library import DatabaseLibrary, MysqlConnection
+from archivationsystem.archivation.archiver import Archiver
+from archivationsystem.common.yaml_parser import parse_yaml_config
+from archivationsystem.database.db_library import (
+    DatabaseLibrary,
+    MysqlConnection,
+)
 
 
 def main():

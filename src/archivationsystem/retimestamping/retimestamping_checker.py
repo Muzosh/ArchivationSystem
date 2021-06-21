@@ -13,7 +13,7 @@ from ..rabbitmq_connection.task_consumer import ConnectionMaker
 
 def format_task_message(file_id: int):
     task_message = {
-        "task": "Retimestamp",
+        "task": "retimestamp",
         "file_id": file_id,
     }
     return json.dumps(task_message)
@@ -23,7 +23,7 @@ def make_task(channel, queue, task_message):
     channel.basic_publish(
         exchange="",
         routing_key=queue,
-        properties=pika.BasicProperties(correlation_id=str(uuid4)),
+        properties=pika.BasicProperties(correlation_id=str(uuid4())),
         body=task_message,
     )
 

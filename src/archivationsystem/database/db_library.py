@@ -23,7 +23,7 @@ from .sql_queries import (
 # from typing import overload - was unused
 
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 class MysqlConnection(object):
@@ -99,7 +99,7 @@ class DatabaseHandler(object):
         """
         self.create_new_record_archived_file(archf_data)
         filep_data.ArchivedFileID = self.get_file_id_archived_file_rec(
-            archf_data.OwnerName, archf_data.FileName
+            archf_data.FileName, archf_data.OwnerName
         )
         self.create_new_record_file_package(filep_data)
 

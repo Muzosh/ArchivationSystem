@@ -15,7 +15,7 @@ from ..common.exceptions import (
 )
 from ..database.file_package import FilePackage
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 class Retimestamper:

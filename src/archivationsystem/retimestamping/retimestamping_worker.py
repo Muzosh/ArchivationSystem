@@ -11,7 +11,7 @@ from .retimestamper import Retimestamper
 # from contextlib import closing - was unused
 
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 class RetimestampingWorker:
@@ -54,7 +54,9 @@ class RetimestampingWorker:
         logger.debug("[retimestamping_worker] creation of database connection")
         with MysqlConnection(self.db_config) as db_connection:
             db_handler = DatabaseHandler(db_connection)
-            retimestamper = Retimestamper(db_handler, self.retimestamping_config)
+            retimestamper = Retimestamper(
+                db_handler, self.retimestamping_config
+            )
             file_id = self._parse_message_body(body)
             logger.info(
                 "[retimestamping_worker] executing retimestamping of file"

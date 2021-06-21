@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import pika
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 class ConnectionMaker(object):
@@ -115,14 +115,14 @@ class TaskConsumer(object):
     ):
         self.connection = rabbitmq_connection.make_connection()
         self.rabbitmq_channel = self.connection.channel()
-        self.consumer_ID = channel_config["consumer_ID"]
+        # self.consumer_ID = channel_config["consumer_ID"]
         self.task_queue = channel_config["task_queue"]
-        self.control_exchange = channel_config["control_exchange"]
+        # self.control_exchange = channel_config["control_exchange"]
         self.callback_setup = False
 
     def _setup_control_channel(self):
         logger.debug("[consumer] setting control exchange")
-        self.rabbitmq_channel.queue_declare(self.consumer_ID)
+        self.rabbitmq_channel.queue_declare(self.consumer_ID, )
         self.rabbitmq_channel.queue_bind(
             queue=self.consumer_ID,
             exchange=self.control_exchange,
@@ -149,7 +149,7 @@ class TaskConsumer(object):
         This function will start consumer.
         Callback fucntion must be set before !!
         """
-        self._setup_control_channel()
+        # self._setup_control_channel()  # maybe later?
         if self.callback_setup is False:
             logger.Exception(
                 "[consumer] task queue and callback function havent been"
@@ -232,7 +232,7 @@ class TaskConsumer(object):
             channel.basic_publish(
                 exchange="",
                 routing_key="failed_tasks",
-                properties=pika.BasicProperties(correlation_id=str(uuid4)),
+                properties=pika.BasicProperties(correlation_id=str(uuid4())),
                 body=body,
             )
             channel.basic_ack(delivery_tag=delivery_tag)

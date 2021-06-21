@@ -12,7 +12,7 @@ from archivationsystem.rabbitmq_connection.task_consumer import ConnectionMaker
 
 def format_task_message(file_path, owner):
     task_message = {
-        "task": "Archivation",
+        "task": "archive",
         "file_path": str(file_path),
         "owner_name": str(owner),
     }
@@ -26,10 +26,14 @@ def make_task(config, task_message):
     channel.basic_publish(
         exchange="",
         routing_key=config["rabbitmq_info"].get("task_queue"),
-        properties=pika.BasicProperties(correlation_id=str(uuid4)),
+        properties=pika.BasicProperties(correlation_id=str(uuid4())),
         body=task_message,
     )
-    print("Message published: ", task_message)
+    print(
+        "Message published to: ",
+        config["rabbitmq_info"].get("task_queue"),
+        task_message,
+    )
     channel.close()
 
 
