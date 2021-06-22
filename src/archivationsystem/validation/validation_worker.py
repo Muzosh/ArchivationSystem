@@ -64,7 +64,7 @@ class ValidationWorker:
 
     def _parse_message_body(self, body):
         body = json.loads(body)
-        if not body["task"] == "Validation":
+        if not body["task"] == "validate":
             logger.warning(
                 "incorrect task label for validation worker, body: %s",
                 str(body),

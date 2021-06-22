@@ -61,7 +61,7 @@ class Retimestamper:
         logger.info(
             "[retimestamping] inserting file package record into database"
         )
-        self.db_handler.create_new_record_FilePackages(self.file_pack_record)
+        self.db_handler.create_new_record_file_package(self.file_pack_record)
         return "OK"  # or exception
 
     def _verify_existing_package(self, file_id):
@@ -69,13 +69,13 @@ class Retimestamper:
         logger.debug(
             "[retimestamping] getting arichivated file record from db"
         )
-        arch_f = self.db_handler.get_specific_ArchivedFile_record_by_FileId(
+        arch_f = self.db_handler.get_specific_archived_file_record_by_file_id(
             file_id
         )
         logger.debug(
             "[retimestamping] getting latest package file record from db"
         )
-        latest_file_p = self.db_handler.get_FilePackages_records(
+        latest_file_p = self.db_handler.get_file_package_records(
             file_id, latest=True
         )
         storage_dir = arch_f.PackageStoragePath

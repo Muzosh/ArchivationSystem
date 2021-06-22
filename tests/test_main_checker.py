@@ -1,12 +1,12 @@
-from common.yaml_parser import parse_yaml_config
-from retimestamping.retimestamping_checker import (
+from archivationsystem.common.yaml_parser import parse_yaml_config
+from archivationsystem.retimestamping.retimestamping_checker import (
     checker_controller
 )
 
 
 def main():
     config = parse_yaml_config(
-        r"/home/server/Desktop/Archivation-System/example_config/testing_config.yaml"
+        r"/home/nextcloudadmin/ArchivationSystem/config/start_retimestamping_scheduler_config.yaml"
     )
     checker_controller(config)
 

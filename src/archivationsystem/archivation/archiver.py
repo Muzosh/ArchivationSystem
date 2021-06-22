@@ -80,7 +80,7 @@ class Archiver:
 
     def _validate_certificates(self):
         logger.info("validation certificates")
-        path_ca = self.archivation_config["signing_info"]["certificate_path"]
+        # path_ca = self.archivation_config["signing_info"]["certificate_path"]
         # path_crl = self.archivation_config["signing_info"]["crl_path"]
         path_tsa_ca_pem = self.archivation_config["TSA_info"]["tsa_ca_pem"]
         tsa_crl_url = self.archivation_config["TSA_info"]["tsa_crl_url"]

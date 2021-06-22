@@ -10,11 +10,11 @@ from archivationsystem.common.yaml_parser import parse_yaml_config
 from archivationsystem.rabbitmq_connection.task_consumer import ConnectionMaker
 
 
-def format_task_message(files_info: list, recipients: list):
+def format_task_message(file_info: list, recipients: list):
     task_message = {
         "task": "validate",
-        "files_info": files_info,
-        "result_recipients": list(recipients),  # ? why list(list)?
+        "files_info": file_info,
+        "result_recipients": list(recipients),
     }
     return json.dumps(task_message)
 
@@ -189,11 +189,11 @@ def main():
     connection = c_maker.make_connection()
     channel = connection.channel()
 
-    for file_i in files_info:
+    for file_info in files_info:
         make_task(
             channel,
             parsed_config["rabbitmq_info"].get("task_queue"),
-            format_task_message(file_i, recipients),
+            format_task_message(file_info, recipients),
         )
     channel.close()
     connection.close()

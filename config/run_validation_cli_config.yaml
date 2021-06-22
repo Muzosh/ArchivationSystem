@@ -17,7 +17,7 @@ rabbitmq_connection:
 
 rabbitmq_info:
   # consumer_ID: "Archivator"
-  task_queue: "retimestamping"
+  task_queue: "validation"
   # control_exchange: "control"
 
 # rabbitmq_logging:

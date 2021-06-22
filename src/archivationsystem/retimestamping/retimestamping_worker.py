@@ -69,7 +69,7 @@ class RetimestampingWorker:
 
     def _parse_message_body(self, body):
         body = json.loads(body)
-        if not body["task"] == "Retimestamp":
+        if not body["task"] == "retimestamp":
             logger.warning(
                 "incorrect task label for retimestamping worker, body: %s",
                 str(body),

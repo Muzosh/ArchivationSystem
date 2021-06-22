@@ -1,8 +1,8 @@
 db_config:
-  user: "test_user"
-  password: "Password1"
+  user: "ncadmin"
+  password: "ncadmin"
   host: "127.0.0.1"
-  database: "archivation_system_db"
+  database: "archivationsystem"
 
 rabbitmq_connection:
   host: "localhost"

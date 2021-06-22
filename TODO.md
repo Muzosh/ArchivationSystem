@@ -8,6 +8,7 @@
     - db_library neposkytuje možnost záznamy z tabulky mazat - to je možná dobře? pro údržbu je to spíš špatně
     - v DB.ArchivedFile se na kombinaci FileName+Owner nahlíží jako na UNIQUE constraint - to je možná až moc omezující, možná bych dal jen FilePath UNIQUE, pokud opravdu chceme zamezit znovu-archivování stejného souboru
 - rabbitmq umí u queues a messages nastavit durable=True, což znamená, že pád serveru neohrozí stav serveru
+
 # Strukturální změny
 - možná třeba spojit soubory do nějakých X_helper.py nebo naopak rozdělit do více modulů
 - dát více duplicitních věcí do common
@@ -36,6 +37,7 @@
     - výběr je založen na základě znalost jména souboru, jména vlastníka nebo pokud člověk dokonce zná ID v DB
     - asi by bylo fajn ještě přidat např. "zvaliduj posledních X souborů"
     - ještě to pak třeba zautomatizovat
+    - navíc se zbytečně posílá několik tasku pro každý FileID - jeho recipients budou vždy stejní
 - možná z rabbitmq přejít na Twisted, vypadá to jednoduššeji (nebo také nějaké jiné tools?)
     - má v sobě dohromady:
         - echo server

@@ -1,20 +1,16 @@
-from hashlib import sha512
-
-from archivation import archiver
-from common.yaml_parser import parse_yaml_config
+from archivationsystem.common import utils as common_utils
 
 
 def main():
 
-    crt = archiver.get_certificate("/home/server/Desktop/cert.pem")
-    print(type(crt))
-    prkey = archiver.get_private_key(
-        "/home/server/Desktop/key.pem", "Password1"
+    crt = common_utils.get_certificate("/home/nextcloudadmin/certs/myCert.crt")
+    prkey = common_utils.get_private_key(
+       "/home/nextcloudadmin/certs/myCert.key", "ncadmin"
     )
 
-    signature = archiver.sign_data(b"ahoj", prkey)
+    signature = common_utils.sign_data(b"ahoj", prkey)
 
-    val = archiver.validate_signature(b"ahoj", signature, crt.public_key())
+    val = common_utils.validate_signature(b"ahoj", signature, crt.public_key())
 
     print(val)
 

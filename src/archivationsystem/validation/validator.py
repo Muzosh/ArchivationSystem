@@ -95,11 +95,13 @@ class Validator:
             "[validation] archived file info from task %s", str(file_info)
         )
         if file_info.isdigit():
-            return self.db_handler.get_specific_ArchivedFile_record_by_FileId(
-                int(file_info)
+            return (
+                self.db_handler.get_specific_archived_file_record_by_file_id(
+                    int(file_info)
+                )
             )
         elif isinstance(file_info, tuple):
-            return self.db_handler.get_fileID_ArchivedFile_rec(
+            return self.db_handler.get_file_id_archived_file_rec(
                 file_info[1], file_info[0]
             )
         logger.warning("[validation] Wrong task format for validation")
@@ -110,7 +112,7 @@ class Validator:
             "[validation] getting all file package records associated with"
             " archived file"
         )
-        file_recs = self.db_handler.get_FilePackages_records(file_id)
+        file_recs = self.db_handler.get_file_package_records(file_id)
         file_recs.sort(key=lambda x: x.IssuingDate, reverse=True)
         return file_recs
 
@@ -248,9 +250,9 @@ class Validator:
         self._verify_certificate_with_crl(
             extract_path, "tsa_cert_crl.crl", "tsa_ca.pem"
         )
-        self._verify_certificate_with_crl(
-            extract_path, "signing_cert_crl.crl", "signing_cert.pem"
-        )  # NOTE: comment if you dont want to use CRL
+        # self._verify_certificate_with_crl( - to validate our own CRL
+        #     extract_path, "signing_cert_crl.crl", "signing_cert.pem"
+        # ) 
 
         logger.debug(
             "[validation] verifying archived file from archive storage with"
