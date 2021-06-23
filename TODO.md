@@ -1,6 +1,5 @@
 # Funkční/logické změny
-- u logování upravit pojmy v hranatých závorkách tak, aby to odráželo, z jaké třídy nebo z jakého modulu se to volá
-    - ve finále to tam aní není potřeba, protože ta logovací knihovna pro rabbitmq do pythonu má dostatek informací
+- ! opravit logování a docstrings, aby bylo trochu více přehledné
 - všechny operace dát do jednoho DB contextu a zajistit revertibilitu v případě chyby
 - po provedení archivace pravděpodobně budeme chtít původní soubory smazat (s tím souvisí i další bod šifrování)
 - je třeba vyřešit nějak šifrování - momentálně se ukládá soubor zašifrovaný nextcloudem, co klíče?
@@ -8,14 +7,17 @@
     - db_library neposkytuje možnost záznamy z tabulky mazat - to je možná dobře? pro údržbu je to spíš špatně
     - v DB.ArchivedFile se na kombinaci FileName+Owner nahlíží jako na UNIQUE constraint - to je možná až moc omezující, možná bych dal jen FilePath UNIQUE, pokud opravdu chceme zamezit znovu-archivování stejného souboru
 - rabbitmq umí u queues a messages nastavit durable=True, což znamená, že pád serveru neohrozí stav serveru
+- každý vytvořený proces si vytváří svého (např.) vlastního Archivera (ten však asi může být jeden pro všechny procesy)
 
 # Strukturální změny
 - možná třeba spojit soubory do nějakých X_helper.py nebo naopak rozdělit do více modulů
+- v utils rozdělit metody do tříd nebo modulů
 - dát více duplicitních věcí do common
     - např. parsování argumentů v start_X?
 - ConnectionMaker dát do samotného modulu
     - oddělit od TaskConsumera
-- projet variables v celém projektu a trochu je upravit tak, aby lépe odrážely to, co v sobě mají uložené
+    - nebo spíše přejmenovat celý modul
+- ! projet variables v celém projektu a trochu je upravit tak, aby lépe odrážely to, co v sobě mají uložené
     - ne všechny, ale u některých je to potřeba
 - na konci možná dát configs do /etc/archivationsystem/config?
 - database.db_library: _get_formated_XXX jsou možná zbytečné
@@ -27,8 +29,7 @@
 - hesla k autentizaci u rabbimq serveru jsou uložena v plaintextu v configu
 
 # Dokumentace
-- přesunout sqlscripts do docs a odkázat se na ně v README
-- dopsat do README instalaci archivationsystem balíku
+- ! přesunout sqlscripts do docs a odkázat se na ně v README
 
 # Návrhy
 - některé configy jsou duplicitní a vždy budou stejné

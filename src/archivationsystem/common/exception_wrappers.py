@@ -27,14 +27,14 @@ def db_handler_exception_wrapper(function):
             return function(*args, **kwargs)
         except (mysql_errors.ProgrammingError) as e:
             logger.exception(
-                "[db_api] Wrong SQL syntax probably",
+                "Wrong SQL syntax probably",
                 exc_info=True,
                 stack_info=True,
             )
             raise DatabaseSyntaxErrorCustomException(e) from e
         except (mysql_errors.IntegrityError) as e:
-            logger.warning(
-                "[db_api] Record probably exist or other constraint failed",
+            logger.exception(
+                "Record probably exist or other constraint failed",
                 exc_info=True,
                 stack_info=True,
             )
@@ -43,12 +43,11 @@ def db_handler_exception_wrapper(function):
             RecordDoesNotExistCustomException,
             WrongRecordFormatCustomException,
         ) as e:
-            logger.warning("[db_api] Incorrect use of db")
+            logger.error("Incorrect use of db")
             raise e
         except (mysql_errors.Error) as e:
             logger.exception(
-                "[db_api] Some unhendled exception appeared in mysql.connector"
-                " module",
+                "Some unhandled exception appeared in mysql.connector module",
                 exc_info=True,
                 stack_info=True,
             )
@@ -69,12 +68,14 @@ def task_exceptions_wrapper(function):
         try:
             return function(*args, **kwargs)
         except CertificateNotValidCustomException:  # as e: - was unused
-            logger.warning(
-                "Certificate not valid", exc_info=True, stack_info=True
+            logger.exception(
+                "Certificate is invalid",
+                exc_info=True,
+                stack_info=True,
             )
             result = "FAILED"
         except (ArchivationOperationCustomException):  # as e: - was unused
-            logger.warning(
+            logger.exception(
                 "Exception occured during archivation, verification or"
                 " timestamping process",
                 exc_info=True,
@@ -82,18 +83,24 @@ def task_exceptions_wrapper(function):
             )
             result = "FAILED"
         except (WrongTaskCustomException):  # as e: - was unused
-            logger.warning(
+            logger.exception(
                 "Wrong task came for given worker",
                 exc_info=True,
                 stack_info=True,
             )
             result = "KNOWN_ERROR"
         except (RecordCanNotBeInsertedCustomException):  # as e: - was unused
-            logger.warning("Constraint error", exc_info=True, stack_info=True)
-            result = "KNOWN_ERROR"
+            logger.exception(
+                "Constraint error",
+                exc_info=True,
+                stack_info=True,
+            )
+            result = "FAILED"
         except (EOFError):  # as e: - was unused
-            logger.warning(
-                "File operation error", exc_info=True, stack_info=True
+            logger.exception(
+                "File operation error",
+                exc_info=True,
+                stack_info=True,
             )
             result = "FAILED"
         return result

@@ -45,9 +45,10 @@ class Retimestamper:
             pack_id,
         ) = self._verify_existing_package(file_id)
         ts_new = self._create_new_timestamp(storage_dir, actual_package_hash)
-        tar_path = common_utils.create_tar_file_from_dir(
+        tar_path = os.path.join(storage_dir, "PackageF{}.tar".format(pack_id))
+        common_utils.create_tar_file_from_dir(
             storage_dir,
-            os.path.join(storage_dir, "PackageF{}.tar".format(pack_id)),
+            tar_path,
         )
         self._fill_package_record(file_id, ts_new, tar_path)
 
@@ -83,7 +84,9 @@ class Retimestamper:
         ts, data, tar_package_path = self._get_ts_data_from_package(
             storage_dir
         )
-        actual_package_hash = common_utils.hash_file(sha512, tar_package_path)
+        actual_package_hash = common_utils.get_file_hash(
+            sha512, tar_package_path
+        )
 
         logger.debug(
             "[retimestamping] verifying latest package hashes with db record"
@@ -127,7 +130,7 @@ class Retimestamper:
         )
         self.file_pack_record.ArchivedFileID = file_id
         self.file_pack_record.TimeStampingAuthority = self.config["TSA_info"][
-            "url"
+            "tsa_tsr_url"
         ]
         self.file_pack_record.IssuingDate = rfc3161ng.get_timestamp(ts_new)
         cert = common_utils.get_certificate(
@@ -136,7 +139,7 @@ class Retimestamper:
         self.file_pack_record.TsaCert = base64.b64encode(
             cert.public_bytes(Encoding.PEM)
         )
-        self.file_pack_record.PackageHashSha512 = common_utils.hash_file(
+        self.file_pack_record.PackageHashSha512 = common_utils.get_file_hash(
             sha512, tar_path
         )
         logger.info("[retimestamping] File package record filled")
@@ -170,7 +173,7 @@ class Retimestamper:
         return ts, hash_f, tar_package_path
 
     def _get_expiration_date(self, ts):
-        years = self.config["validity_length"]
+        years = self.config["validity_length_in_years"]
         time = rfc3161ng.get_timestamp(ts)
         logger.debug(
             "[retimestamping] expiration date setup from: %s + %s years",
@@ -215,7 +218,9 @@ class Retimestamper:
         path_tsa_ca_pem = self.config["TSA_info"]["tsa_ca_pem"]
         tsa_crl_url = self.config["TSA_info"]["tsa_crl_url"]
         common_utils.copy_file_to_dir(path_tsa_cert, dir_path, "tsa_cert.crt")
-        common_utils.copy_file_to_dir(path_tsa_ca_pem, dir_path, "tsa_ca.pem")
+        common_utils.copy_file_to_dir(
+            path_tsa_ca_pem, dir_path, "tsa_ca_cert.pem"
+        )
         crl = common_utils.get_current_crl(tsa_crl_url)
         common_utils.validate_certificate(crl, path_tsa_ca_pem)
         common_utils.store_ts_data(crl, dir_path, "tsa_cert_crl.crl")

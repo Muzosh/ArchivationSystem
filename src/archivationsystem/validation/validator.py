@@ -185,7 +185,7 @@ class Validator:
         )
         self._verify_package_hashes(
             file_package.PackageHashSha512,
-            common_utils.hash_file(sha512, tar_path),
+            common_utils.get_file_hash(sha512, tar_path),
         )
         pack_path = self._extract_tar_to_temp_dir(
             tar_path, "PackageF", temp_dir
@@ -193,7 +193,7 @@ class Validator:
         logger.debug("[validation] verifying timestamp and certificate")
         self._verify_package_timestamp(pack_path)
         self._verify_certificate_with_crl(
-            pack_path, "tsa_cert_crl.crl", "tsa_ca.pem"
+            pack_path, "tsa_cert_crl.crl", "tsa_ca_cert.pem"
         )
         return self._get_file_path_from_dir(pack_path, "Package")
 
@@ -201,7 +201,7 @@ class Validator:
         self, package_path, temp_dir, file_package, archived_file_rec
     ):
         logger.debug("[validation] getting package1 hash and verifing it")
-        hash_package1 = common_utils.hash_file(sha512, package_path)
+        hash_package1 = common_utils.get_file_hash(sha512, package_path)
         self._verify_package_hashes(
             file_package.PackageHashSha512, hash_package1
         )
@@ -212,7 +212,7 @@ class Validator:
 
         logger.debug("[validation] getting package0 hash and verifing it")
         package0_path = self._get_file_path_from_dir(extract_path, "Package0")
-        hash_package0 = common_utils.hash_file(sha512, package0_path)
+        hash_package0 = common_utils.get_file_hash(sha512, package0_path)
         self._verify_package_hashes(
             archived_file_rec.Package0HashSha512, hash_package0
         )
@@ -234,7 +234,7 @@ class Validator:
             "[validation] verifying archived file package hash with hash"
             " from database"
         )
-        hash_archived_file = common_utils.hash_file(
+        hash_archived_file = common_utils.get_file_hash(
             sha512,
             os.path.join(extrack_pack0_path, archived_file_rec.FileName),
         )
@@ -248,11 +248,11 @@ class Validator:
 
         logger.debug("[validation] verifying certificates")
         self._verify_certificate_with_crl(
-            extract_path, "tsa_cert_crl.crl", "tsa_ca.pem"
+            extract_path, "tsa_cert_crl.crl", "tsa_ca_cert.pem"
         )
         # self._verify_certificate_with_crl( - to validate our own CRL
         #     extract_path, "signing_cert_crl.crl", "signing_cert.pem"
-        # ) 
+        # )
 
         logger.debug(
             "[validation] verifying archived file from archive storage with"
@@ -337,7 +337,7 @@ class Validator:
             "[validation] getting hash of package to verify from path %s",
             str(data_path),
         )
-        data = common_utils.hash_file(sha512, data_path)
+        data = common_utils.get_file_hash(sha512, data_path)
         logger.debug("[validation] verifying package timestamp")
         self._verify_timestamp(pack_path, "timestamp", data)
 
@@ -347,7 +347,7 @@ class Validator:
             "[validation] getting hash of signature from path %s",
             str(signature_path),
         )
-        hash_signature = common_utils.hash_file(sha512, signature_path)
+        hash_signature = common_utils.get_file_hash(sha512, signature_path)
         self._verify_package_hashes(signature_hash_db, hash_signature)
 
         signature = common_utils.load_data(signature_path)
@@ -360,7 +360,7 @@ class Validator:
         )
         cert = common_utils.get_certificate(cert_path)
         common_utils.validate_signature(
-            signed_data, signature, cert.public_key()
+            signed_data, base64.b64decode(signature), cert.public_key()
         )
         logger.debug("[validation] verification of signature was succesful")
         return hash_signature
@@ -415,7 +415,7 @@ class Validator:
         logger.debug("[validation] verifying original file hash with archived")
         if self.config["remote_access"] is False:
             logger.debug("[validation] file should be on local disk")
-            hash_origin = common_utils.hash_file(sha512, origin_path)
+            hash_origin = common_utils.get_file_hash(sha512, origin_path)
         else:
             logger.debug("[validation] file should be on remote location disk")
             hash_origin = self._get_remote_file_hash(origin_path)

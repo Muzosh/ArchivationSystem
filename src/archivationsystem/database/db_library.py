@@ -1,5 +1,4 @@
 import base64
-import logging
 from contextlib import closing
 from datetime import datetime
 
@@ -20,13 +19,10 @@ from .sql_queries import (
     QUERY_UPDATE_EXPIRATION_DATE_TS_ARCHIVED_FILES,
 )
 
-# from typing import overload - was unused
+# from typing import overload - was unusedw
 
 
-logger = logging.getLogger("archivation_system_logging")
-
-
-class MysqlConnection(object):
+class MysqlConnection:
     """
     This class is responsible for creating managed connection to database
     It takes argument config which has to be in format like:
@@ -53,7 +49,7 @@ class MysqlConnection(object):
             self.db_connection.close()
 
 
-class DatabaseHandler(object):
+class DatabaseHandler:
     """
     database api library, responsible for querying and
     formating data from/to DB

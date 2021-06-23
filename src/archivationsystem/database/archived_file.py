@@ -9,7 +9,7 @@ from ..common.exceptions import WrongRecordFormatCustomException
 logger = logging.getLogger("archivation_system_logging")
 
 
-class ArchivedFile(object):
+class ArchivedFile:
     def __init__(self, column_data=None):
         self.c_data = column_data
         self.FileID = None
@@ -49,76 +49,67 @@ class ArchivedFile(object):
 
     def validate_columns(self):
         error = False
-        logger.debug("[ArchivedFile.validate_columns] starting validation")
+        logger.info("starting validation")
         if not isinstance(self.FileName, str):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of FileName: %s",
+            logger.error(
+                "wrong type of FileName: %s",
                 str(type(self.FileName)),
             )
             error = True
         if not isinstance(self.OriginalFilePath, str):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " OriginalFilePath: %s",
+            logger.error(
+                "wrong type of OriginalFilePath: %s",
                 str(type(self.OriginalFilePath)),
             )
             error = True
         if not isinstance(self.PackageStoragePath, str):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " PackageStoragePath: %s",
+            logger.error(
+                "wrong type of PackageStoragePath: %s",
                 str(type(self.PackageStoragePath)),
             )
             error = True
         if not isinstance(self.OriginFileHashSha512, bytes):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " OriginFileHashSha512: %s",
+            logger.error(
+                "wrong type of OriginFileHashSha512: %s",
                 str(type(self.OriginFileHashSha512)),
             )
             error = True
         if not isinstance(self.TimeOfFirstTS, datetime):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " TimeOfFirstTS: %s",
+            logger.error(
+                "wrong type of TimeOfFirstTS: %s",
                 str(type(self.TimeOfFirstTS)),
             )
             error = True
 
         if not isinstance(self.SigningCert, bytes):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " SigningCert: %s",
+            logger.error(
+                "wrong type of SigningCert: %s",
                 str(type(self.SigningCert)),
             )
             error = True
 
         if not isinstance(self.SignatureHashSha512, bytes):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " SignatureHashSha512: %s",
+            logger.exerrorception(
+                "wrong type of SignatureHashSha512: %s",
                 str(type(self.SignatureHashSha512)),
             )
             error = True
 
         if not isinstance(self.Package0HashSha512, bytes):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " Package0HashSha512: %s",
+            logger.error(
+                "wrong type of Package0HashSha512: %s",
                 str(type(self.Package0HashSha512)),
             )
             error = True
 
         if not isinstance(self.ExpirationDateTS, datetime):
-            logger.exception(
-                "[ArchivedFile.validate_columns] wrong type of"
-                " ExpirationDateTS: %s",
+            logger.error(
+                "wrong type of ExpirationDateTS: %s",
                 str(type(self.ExpirationDateTS)),
             )
             error = True
 
         if error is True:
             raise WrongRecordFormatCustomException(
-                "Wrong format of values in object --> cannot be inserted"
-                " into DB"
+                "Wrong format of values in object, cannot be inserted into DB"
             )

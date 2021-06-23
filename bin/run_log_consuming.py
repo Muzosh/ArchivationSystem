@@ -19,7 +19,7 @@ def listen_logs():
 
     channel = connection.channel()
 
-    def callback_print_message(ch, method, properties, body):   
+    def callback_print_message(ch, method, properties, body):
         print(body.decode())
 
     channel.basic_consume(

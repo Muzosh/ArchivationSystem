@@ -34,8 +34,8 @@ rabbitmq_info:
   # control_exchange: "control"
 
 archivation_system_info:
-  storage_dir_path: "/home/nextcloudadmin/results/" #path where archived files will be stored
-  validity_length: 2
+  archivation_storage_path: "/home/nextcloudadmin/results/" #path where archived files will be stored
+  validity_length_in_years: 2
   signing_info:
     certificate_path: "/home/nextcloudadmin/certs/myCert.crt"
     private_key_path: "/home/nextcloudadmin/certs/myCert.key"
@@ -50,7 +50,7 @@ archivation_system_info:
     #  key_filepath: '' #path to authetication key for sftp
     #  password: '' #password to for authetication key file
   TSA_info:
-    url: "https://freetsa.org/tsr"
+    tsa_tsr_url: "https://freetsa.org/tsr"
     tsa_cert_path: "/home/nextcloudadmin/certs/tsa.crt"
     tsa_ca_pem: "/home/nextcloudadmin/certs/cacert.pem"
     tsa_crl_url: "https://www.freetsa.org/crl/root_ca.crl" #url to download crl for verification

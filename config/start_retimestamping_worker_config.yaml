@@ -34,9 +34,9 @@ rabbitmq_info:
   # control_exchange: "control"
 
 retimestamping_info:
-  validity_length: 2
+  validity_length_in_years: 2
   TSA_info:
-    url: "https://freetsa.org/tsr"
+    tsa_tsr_url: "https://freetsa.org/tsr"
     tsa_cert_path: "/home/nextcloudadmin/certs/tsa.crt"
     tsa_ca_pem: "/home/nextcloudadmin/certs/cacert.pem"
     tsa_crl_url: "https://www.freetsa.org/crl/root_ca.crl"

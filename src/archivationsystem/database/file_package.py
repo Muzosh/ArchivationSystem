@@ -9,7 +9,7 @@ from ..common.exceptions import WrongRecordFormatCustomException
 logger = logging.getLogger("archivation_system_logging")
 
 
-class FilePackage(object):
+class FilePackage:
     def __init__(self, column_data=None):
         self.c_data = column_data
         self.PackageID = None
@@ -36,41 +36,40 @@ class FilePackage(object):
 
     def validate_columns(self):
         error = False
-        logger.debug("[db_record] starting validation of record")
+        logger.debug("starting validation of record")
 
         if not isinstance(self.ArchivedFileID, int):
-            logger.exception(
-                "[db_record] wrong type of ArchivedFileID: %s",
+            logger.error(
+                "wrong type of ArchivedFileID: %s",
                 str(type(self.ArchivedFileID)),
             )
             error = True
         if not isinstance(self.TimeStampingAuthority, str):
-            logger.exception(
-                "[db_record] wrong type of Time Stamping authority: %s",
+            logger.error(
+                "wrong type of Time Stamping authority: %s",
                 str(type(self.TimeStampingAuthority)),
             )
             error = True
         if not isinstance(self.IssuingDate, datetime):
-            logger.exception(
-                "[db_record] wrong type of IssuingDate: %s",
+            logger.error(
+                "wrong type of IssuingDate: %s",
                 str(type(self.IssuingDate)),
             )
         if not isinstance(self.TsaCert, bytes):
-            logger.exception(
-                "[db_record] wrong type of TsaCert: %s",
+            logger.error(
+                "wrong type of TsaCert: %s",
                 str(type(self.TsaCert)),
             )
             error = True
 
         if not isinstance(self.PackageHashSha512, bytes):
-            logger.exception(
-                "[db_record] wrong type of PackageHashSha512: %s",
+            logger.error(
+                "wrong type of PackageHashSha512: %s",
                 str(type(self.PackageHashSha512)),
             )
             error = True
 
         if error is True:
             raise WrongRecordFormatCustomException(
-                " Wrong format of values in object --> cannot be inserted"
-                " into DB"
+                " Wrong format of values in object, cannot be inserted into DB"
             )

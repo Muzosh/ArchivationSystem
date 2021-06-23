@@ -49,6 +49,6 @@ validation_info:
     #  key_filepath: '' #path to authetication key for sftp
     #  password: '' #password to for authetication key file
   TSA_info:
-    url: "https://freetsa.org/tsr"
+    tsa_tsr_url: "https://freetsa.org/tsr"
     tsa_cert_path: "/home/nextcloudadmin/certs/tsa.crt"
     tsa_ca_pem: "/home/nextcloudadmin/certs/cacert.pem"

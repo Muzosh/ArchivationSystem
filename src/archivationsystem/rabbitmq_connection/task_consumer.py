@@ -9,7 +9,7 @@ import pika
 logger = logging.getLogger("archivation_system_logging")
 
 
-class ConnectionMaker(object):
+class ConnectionMaker:
     """
     Object responsible for creating connection
     to rabbitmq server with given paramaters from config
@@ -18,15 +18,15 @@ class ConnectionMaker(object):
     jus put false in config on plase of enable_ssl
     """
 
-    def __init__(self, connection_config: dict):
-        self.config = connection_config
+    def __init__(self, rabbitmq_connection: dict):
+        self.rabbitmq_connection = rabbitmq_connection
         self.__host = None
         self.__virtual_host = None
         self.__port = None
         self.__credentials: dict = None
         self.__enable_ssl = None
 
-    def __set_config_values(self):
+    def _set_config_values(self):
         """
         parse all config values for creating a session
         host
@@ -45,12 +45,11 @@ class ConnectionMaker(object):
             CA_data: str-path
         } or false
         """
-        logger.debug("[rabbimq_connection_maker] mapping values from config")
-        self.__host = self.config.get("host")
-        self.__virtual_host = self.config.get("virtual_host")
-        self.__port = self.config.get("port")
-        self.__credentials: dict = self.config.get("credentials")
-        self.__enable_ssl = self.config.get("enable_ssl")
+        self.__host = self.rabbitmq_connection.get("host")
+        self.__virtual_host = self.rabbitmq_connection.get("virtual_host")
+        self.__port = self.rabbitmq_connection.get("port")
+        self.__credentials: dict = self.rabbitmq_connection.get("credentials")
+        self.__enable_ssl = self.rabbitmq_connection.get("enable_ssl")
 
     def __get_credentials(self):
         return pika.PlainCredentials(
@@ -60,7 +59,7 @@ class ConnectionMaker(object):
         )
 
     def __setup_ssl(self):
-        logger.debug("[ConnectionMaker] setting up ssl configuration")
+        logger.info("setting up ssl configuration")
         if self.__enable_ssl is False:
             return None
         ssl_context = ssl.create_default_context(
@@ -81,15 +80,8 @@ class ConnectionMaker(object):
         """
         Method that will create rabbitmq connection
         """
-        logger.info(
-            "[rabbimq_connection_maker] starting attempt to create connection"
-            " to rabbitmq"
-        )
-        self.__set_config_values()
-        logger.debug(
-            "[rabbimq_connection_maker] setting values from config to"
-            " connection parameter"
-        )
+        logger.info("attempting to create connection to rabbitmq")
+        self._set_config_values()
         connection_values = pika.ConnectionParameters(
             host=self.__host,
             port=self.__port,
@@ -97,11 +89,11 @@ class ConnectionMaker(object):
             credentials=self.__get_credentials(),
             ssl_options=self.__setup_ssl() if self.__enable_ssl else None,
         )
-        logger.debug("[rabbimq_connection_maker] creating blocking connection")
+        logger.info("creating blocking connection")
         return pika.BlockingConnection(connection_values)
 
 
-class TaskConsumer(object):
+class TaskConsumer:
     """
     Task consumer is responsible for listning on rabbitmq
     queue in channel for possible tasks. If task is recieved
@@ -122,7 +114,9 @@ class TaskConsumer(object):
 
     def _setup_control_channel(self):
         logger.debug("[consumer] setting control exchange")
-        self.rabbitmq_channel.queue_declare(self.consumer_ID, )
+        self.rabbitmq_channel.queue_declare(
+            self.consumer_ID,
+        )
         self.rabbitmq_channel.queue_bind(
             queue=self.consumer_ID,
             exchange=self.control_exchange,
