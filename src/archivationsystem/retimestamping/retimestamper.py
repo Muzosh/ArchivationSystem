@@ -40,99 +40,103 @@ class Retimestamper:
         of archived file which will be retimestamped
         """
         (
-            storage_dir,
-            actual_package_hash,
-            pack_id,
+            archivation_storage_path,
+            current_package_hash,
+            package_id,
         ) = self._verify_existing_package(file_id)
-        ts_new = self._create_new_timestamp(storage_dir, actual_package_hash)
-        tar_path = os.path.join(storage_dir, "PackageF{}.tar".format(pack_id))
+        new_timestamp = self._create_new_timestamp(
+            archivation_storage_path, current_package_hash
+        )
+        tar_path = os.path.join(
+            archivation_storage_path, "PackageF{}.tar".format(package_id)
+        )
         common_utils.create_tar_file_from_dir(
-            storage_dir,
+            archivation_storage_path,
             tar_path,
         )
-        self._fill_package_record(file_id, ts_new, tar_path)
+        self._fill_package_record(file_id, new_timestamp, tar_path)
 
-        logger.info(
-            "[retimestamping] updating archived record with latest"
-            " expiration date"
-        )
+        logger.info("updating archived record with latest expiration date")
         self.db_handler.update_expiration_date_ts(
-            file_id, self._get_expiration_date(ts_new)
+            file_id, self._get_expiration_date(new_timestamp)
         )
-        logger.info(
-            "[retimestamping] inserting file package record into database"
-        )
+
+        logger.info("inserting file package record into database")
         self.db_handler.create_new_record_file_package(self.file_pack_record)
         return "OK"  # or exception
 
     def _verify_existing_package(self, file_id):
-        logger.info("[retimestamping] verifying last package timestamp...")
-        logger.debug(
-            "[retimestamping] getting arichivated file record from db"
+        logger.info("verifying last package timestamp")
+
+        logger.info("getting arichivated file record from db")
+        archived_file = (
+            self.db_handler.get_specific_archived_file_record_by_file_id(
+                file_id
+            )
         )
-        arch_f = self.db_handler.get_specific_archived_file_record_by_file_id(
-            file_id
-        )
-        logger.debug(
-            "[retimestamping] getting latest package file record from db"
-        )
-        latest_file_p = self.db_handler.get_file_package_records(
+        archivation_storage_path = archived_file.PackageStoragePath
+
+        logger.info("getting latest package file record from db")
+        latest_file_package = self.db_handler.get_file_package_records(
             file_id, latest=True
         )
-        storage_dir = arch_f.PackageStoragePath
-        logger.debug("[retimestamping] getting data from package")
-        ts, data, tar_package_path = self._get_ts_data_from_package(
-            storage_dir
-        )
-        actual_package_hash = common_utils.get_file_hash(
+
+        logger.info("getting data from package")
+        (
+            timestamp,
+            timestamped_file_hash,
+            tar_package_path,
+        ) = self._get_ts_data_from_package(archivation_storage_path)
+
+        logger.info("verifying latest package hash")
+        current_package_hash = common_utils.get_file_hash(
             sha512, tar_package_path
         )
-
-        logger.debug(
-            "[retimestamping] verifying latest package hashes with db record"
-        )
         self._verify_final_package_hashes(
-            latest_file_p.PackageHashSha512, actual_package_hash
+            latest_file_package.PackageHashSha512, current_package_hash
         )
-        logger.debug("[retimestamping] verifying latest timestamp")
-        val = common_utils.verify_timestamp(ts, data, self.config["TSA_info"])
-        if val is not True:
+
+        logger.info("verifying latest timestamp")
+        verification_result = common_utils.verify_timestamp(
+            timestamp, timestamped_file_hash, self.config["TSA_info"]
+        )
+        if verification_result is not True:
             logger.exception(
-                "[retimestamping] Last timestamp of package in path %s is"
-                " invalid",
-                str(storage_dir),
+                "Last timestamp of package in path %s is invalid",
+                str(archivation_storage_path),
             )
             raise TimestampInvalidCustomException(
                 "Last timestamp of package is invalid"
             )
-        logger.info(
-            "[retimestamping] last package timestamp has been succesfuly"
-            " validated"
+        return (
+            archivation_storage_path,
+            current_package_hash,
+            latest_file_package.PackageID,
         )
-        return storage_dir, actual_package_hash, latest_file_p.PackageID
 
-    def _create_new_timestamp(self, storage_dir, actual_package_hash):
-        logger.info("[retimestamping] getting new package timestamp")
-        ts_new = common_utils.get_timestamp(
-            self.config["TSA_info"], actual_package_hash
+    def _create_new_timestamp(
+        self, archivation_storage_path, current_package_hash
+    ):
+        logger.info("getting new package timestamp")
+        new_timestamp = common_utils.get_timestamp(
+            self.config["TSA_info"], current_package_hash
         )
-        logger.info(
-            "[retimestamping] storing timestamp to storage directory.."
+        logger.info("storing timestamp to storage directory..")
+        common_utils.store_ts_data(
+            new_timestamp, archivation_storage_path, "timestamp"
         )
-        common_utils.store_ts_data(ts_new, storage_dir, "timestamp")
-        self._store_used_cert_files(storage_dir)
-        return ts_new
+        self._store_used_cert_files(archivation_storage_path)
+        return new_timestamp
 
-    def _fill_package_record(self, file_id, ts_new, tar_path):
-        logger.info(
-            "[retimestamping] Filling new file package record with gathered"
-            " data"
-        )
+    def _fill_package_record(self, file_id, new_timestamp, tar_path):
+        logger.info("Filling new file package record with gathered data")
         self.file_pack_record.ArchivedFileID = file_id
         self.file_pack_record.TimeStampingAuthority = self.config["TSA_info"][
             "tsa_tsr_url"
         ]
-        self.file_pack_record.IssuingDate = rfc3161ng.get_timestamp(ts_new)
+        self.file_pack_record.IssuingDate = rfc3161ng.get_timestamp(
+            new_timestamp
+        )
         cert = common_utils.get_certificate(
             self.config["TSA_info"]["tsa_cert_path"]
         )
@@ -142,77 +146,78 @@ class Retimestamper:
         self.file_pack_record.PackageHashSha512 = common_utils.get_file_hash(
             sha512, tar_path
         )
-        logger.info("[retimestamping] File package record filled")
+        logger.info("File package record filled")
 
     def _get_ts_data_from_package(self, dir_path):
         files_in_dir = os.listdir(dir_path)
-        package_name = list(
+        package_name_list = list(
             filter(lambda x: x.startswith("Package"), files_in_dir)
         )
-        if len(package_name) == 0:
+        if len(package_name_list) == 0:
             logger.exception(
-                "[retimestamping] unable to find package in directory: %s",
+                "unable to find package in directory: %s",
                 str(dir_path),
             )
             raise FileNotInDirectoryCustomException(
-                "directory doesnt have files which shoud be there."
+                "unable to find package in directory: {}".format(str(dir_path))
             )
-        tar_package_path = os.path.join(dir_path, package_name[0])
+        tar_package_path = os.path.join(dir_path, package_name_list[0])
+
         logger.debug(
-            "[retimestamping] getting data from tar file on path %s",
+            "getting data from tar file on path %s",
             str(tar_package_path),
         )
         with tarfile.open(tar_package_path, "r:") as tarf:
-            names = tarf.getnames()
-            ts = self._read_timestamp_from_tar(names, tarf)
-            hash_f = self._hash_file_within_tar(sha512, tarf, names)
-        logger.debug(
-            "[retimestamping] needed data from tar package have been"
-            " succesfuly retrieved"
-        )
-        return ts, hash_f, tar_package_path
+            file_names = tarf.getnames()
+            timestamp = self._read_timestamp_from_tar(file_names, tarf)
+            hash_f = self._get_timestamped_file_hash(sha512, tarf, file_names)
 
-    def _get_expiration_date(self, ts):
+        return timestamp, hash_f, tar_package_path
+
+    def _get_expiration_date(self, timestamp):
         years = self.config["validity_length_in_years"]
-        time = rfc3161ng.get_timestamp(ts)
+        time = rfc3161ng.get_timestamp(timestamp)
         logger.debug(
-            "[retimestamping] expiration date setup from: %s + %s years",
+            "expiration date setup from: %s + %s years",
             str(time),
             str(years),
         )
         return time.replace(year=time.year + years)
 
-    def _get_timestamped_file_name(self, names):
-        signature = list(filter(lambda x: x.startswith("signature"), names))
+    def _get_timestamped_file_name(self, file_names):
+        signature = list(
+            filter(lambda x: x.startswith("signature"), file_names)
+        )
         if len(signature) != 0:
             logger.debug(
-                "[retimestamping] Find timestamped file name in name, %s",
+                "Found timestamped file name %s",
                 str(signature),
             )
             return signature[0]
-        package = list(filter(lambda x: x.startswith("Package"), names))
+        package = list(filter(lambda x: x.startswith("Package"), file_names))
         if len(package) != 0:
             logger.debug(
-                "[retimestamping] Find timestamped file name in name, %s",
+                "Find timestamped file name in name, %s",
                 str(signature),
             )
             return package[0]
         logger.exception(
-            "[retimestamping] Tar package doesnt have files which shoud be"
-            " there. Tar Content: %s",
-            str(names),
+            "Cannot find signature or PackageF in directory: %s",
+            str(file_names),
         )
         raise FileNotInDirectoryCustomException(
-            "Tar package doesnt have files which shoud be there."
+            "Cannot find signature or PackageF in directory: {}".format(
+                str(file_names)
+            ),
         )
 
-    def _store_used_cert_files(self, storage_dir):
+    def _store_used_cert_files(self, archivation_storage_path):
         logger.debug(
-            "[retimestamping] storing used certificate files to directory: %s",
-            str(storage_dir),
+            "storing used certificate files to directory: %s",
+            str(archivation_storage_path),
         )
         dir_path = common_utils.create_new_dir_in_location(
-            storage_dir, "certificate_files"
+            archivation_storage_path, "certificate_files"
         )
         path_tsa_cert = self.config["TSA_info"]["tsa_cert_path"]
         path_tsa_ca_pem = self.config["TSA_info"]["tsa_ca_pem"]
@@ -224,12 +229,10 @@ class Retimestamper:
         crl = common_utils.get_current_crl(tsa_crl_url)
         common_utils.validate_certificate(crl, path_tsa_ca_pem)
         common_utils.store_ts_data(crl, dir_path, "tsa_cert_crl.crl")
-        logger.debug(
-            "[retimestamping] certificate files stored in dir of new package"
-        )
+        logger.debug("certificate files stored in dir of new package")
 
-    def _hash_file_within_tar(self, hash, tarf, names):
-        f = tarf.extractfile(self._get_timestamped_file_name(names))
+    def _get_timestamped_file_hash(self, hash, tarf, file_names):
+        f = tarf.extractfile(self._get_timestamped_file_name(file_names))
         file_hash = hash()
         buffer = f.read(8192)
         while buffer != b"":
@@ -237,36 +240,30 @@ class Retimestamper:
             buffer = f.read(8192)
         return file_hash.digest()
 
-    def _read_timestamp_from_tar(self, names, tarf):
-        logger.debug(
-            "[retimestamping] trying to read timestamp from opened tar file"
-        )
-        ts_name = list(filter(lambda x: x.startswith("timestamp"), names))
+    def _read_timestamp_from_tar(self, file_names, tarf):
+        logger.info("trying to read timestamp from opened tar file")
+        ts_name = list(filter(lambda x: x.startswith("timestamp"), file_names))
         if len(ts_name) == 0:
-            logger.debug(
-                "[retimestamping] unable to find timestamp file in tarfile"
-            )
+            logger.exception("unable to find timestamp file in tarfile")
             raise FileNotInDirectoryCustomException(
-                "[retimestamping] unable to find timestamp file in tarfile"
+                "unable to find timestamp file in tarfile"
             )
 
         file = tarf.extractfile(ts_name[0])
-        logger.debug("[retimestamping] reading timestamp from file")
+        logger.info("reading timestamp from file")
         return file.read()
 
     def _verify_final_package_hashes(self, hash_db, hash_pack):
         logger.debug(
-            "[retimestamping] hash from db: %s \n hash of origin file: %s",
+            "hash from db: %s \n hash of package file: %s",
             str(hash_db),
             str(hash_pack),
         )
         if hash_db != base64.b64encode(hash_pack):
             logger.warning(
-                "[retimestamping] hashes of files do not match, verification"
-                " of last timestamp wasnt succesffull"
+                "hash from db and hash of package file do not match"
             )
             raise DigestsNotMatchedCustomException(
-                "[retimestamping] hashes of files do not match, verification"
-                " of last timestamp wasnt succesffull"
+                "hash from db and hash of package file do not match"
             )
-        logger.info("[retimestamping] digests metched, files are the same")
+        logger.info("hash from db and hash of package file matched")

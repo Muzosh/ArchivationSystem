@@ -36,7 +36,7 @@ class ArchivationWorker:
         self.archivation_config = config.get("archivation_system_info")
 
     def run(self):
-        logger.info("starting task consumer")
+        logger.info("starting archivation task consumer")
         self.task_consumer.start()
 
     @task_exceptions_wrapper
@@ -46,12 +46,19 @@ class ArchivationWorker:
         It needs correct task body otherwise it will throw
         WrongTask Exception
         """
+        logger.debug("recieved task with body: %s", str(jbody))
 
         logger.info("creating database connection")
         with MysqlConnection(self.db_config) as db_connection:
             db_handler = DatabaseHandler(db_connection)
             archiver = Archiver(db_handler, self.archivation_config)
             file_path, owner = self._parse_message_body(jbody)
+
+            logger.debug(
+                "executing archivation of file id and owner: %s and %s",
+                str(file_path),
+                str(owner),
+            )
             result = archiver.archive(file_path, owner)
         return result
 
@@ -59,12 +66,13 @@ class ArchivationWorker:
         body = json.loads(jbody)
         if not body.get("task") == "archive":
             logger.error(
-                "incorrect task for archivation worker:"
-                " task=%s", repr(body.get("task"))
+                "incorrect task for archivation worker: task=%s",
+                str(body.get("task")),
             )
             raise WrongTaskCustomException(
-                "incorrect task for archivation worker:"
-                " task=%s", repr(body.get("task"))
+                "incorrect task for archivation worker: task={}".format(
+                    str(body.get("task"))
+                ),
             )
         return body.get("file_path"), body.get("owner_name")
 

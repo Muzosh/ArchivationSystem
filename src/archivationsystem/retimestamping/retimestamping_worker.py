@@ -35,48 +35,46 @@ class RetimestampingWorker:
         self.retimestamping_config = config.get("retimestamping_info")
 
     def run(self):
-        logger.info(
-            "[retimestamping_worker] starting retimestamping worker consumer"
-        )
+        logger.info("starting retimestamping task consumer")
         self.task_consumer.start()
 
     @task_exceptions_wrapper
-    def retimestamp(self, body):
+    def retimestamp(self, jbody):
         """
         Callback function which will be executed on task.
         It needs correct task body otherwise it will throw
         WrongTask Exception
         """
-        logger.info(
-            "[retimestamping_worker] recieved task with body: %s", str(body)
-        )
+        logger.debug("recieved task with body: %s", str(jbody))
 
-        logger.debug("[retimestamping_worker] creation of database connection")
+        logger.info("creating database connection")
         with MysqlConnection(self.db_config) as db_connection:
             db_handler = DatabaseHandler(db_connection)
             retimestamper = Retimestamper(
                 db_handler, self.retimestamping_config
             )
-            file_id = self._parse_message_body(body)
-            logger.info(
-                "[retimestamping_worker] executing retimestamping of file"
-                " id: %s",
+            file_id = self._parse_message_body(jbody)
+
+            logger.debug(
+                "executing retimestamping of file id: %s",
                 str(file_id),
             )
             result = retimestamper.retimestamp(file_id)
-            logger.info("[retimestamping_worker] retimestamping was finished")
         return result
 
     def _parse_message_body(self, body):
         body = json.loads(body)
-        if not body["task"] == "retimestamp":
+        if not body.get("task") == "retimestamp":
             logger.warning(
-                "incorrect task label for retimestamping worker, body: %s",
-                str(body),
+                "incorrect task for retimestamping worker, task: %s",
+                str(body.get("task")),
             )
-            raise WrongTaskCustomException("task is not for this worker")
-        file_id = body["file_id"]
-        return file_id
+            raise WrongTaskCustomException(
+                "incorrect task for retimestamping worker, task: {}".format(
+                    str(body.get("task"))
+                ),
+            )
+        return body.get("file_id")
 
 
 def run_worker(config):

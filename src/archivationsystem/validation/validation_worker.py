@@ -35,44 +35,45 @@ class ValidationWorker:
         self.validation_config = config.get("validation_info")
 
     def run(self):
-        logger.info("[validation_worker] starting validation worker consumer")
+        logger.info("starting validation task consumer")
         self.task_consumer.start()
 
     @task_exceptions_wrapper
-    def validate(self, body):
+    def validate(self, jbody):
         """
         Callback function which will be executed on task.
         It needs correct task body otherwise it will throw
         WrongTask Exception
         """
-        logger.info(
-            "[validation_worker] recieved task with body: %s", str(body)
-        )
+        logger.debug("recieved task with body: %s", str(jbody))
 
-        logger.debug("[validation_worker] creation of database connection")
+        logger.debug("creating database connection")
         with MysqlConnection(self.db_config) as db_connection:
             db_handler = DatabaseHandler(db_connection)
             validator = Validator(db_handler, self.validation_config)
-            files_info, recipients = self._parse_message_body(body)
-            logger.info(
-                "[validation_worker] executing validation of file: %s",
+            files_info, recipients = self._parse_message_body(jbody)
+
+            logger.debug(
+                "executing validation of these files: %s \nfor recipients: %s",
                 str(files_info),
+                str(recipients),
             )
             result = validator.validate(files_info, recipients)
-            logger.info("[validation_worker] validation was finished")
         return result
 
     def _parse_message_body(self, body):
         body = json.loads(body)
-        if not body["task"] == "validate":
+        if not body.get("task") == "validate":
             logger.warning(
-                "incorrect task label for validation worker, body: %s",
-                str(body),
+                "incorrect task for validation worker, task: %s",
+                str(body.get("task")),
             )
-            raise WrongTaskCustomException("task is not for this worker")
-        files_info = body["files_info"]
-        recipients = body["result_recipients"]
-        return files_info, recipients
+            raise WrongTaskCustomException(
+                "incorrect task for validation worker, task: {}".format(
+                    str(body.get("task"))
+                ),
+            )
+        return body.get("files_info"), body.get("recipients")
 
 
 def run_worker(config):

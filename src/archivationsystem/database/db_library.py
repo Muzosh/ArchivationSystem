@@ -169,7 +169,6 @@ class DatabaseHandler:
             raise Exception(
                 "NO FILE PACKAGE RECORDS EXISTS FOR GIVEN ARCHIVED_FILE ID"
             )
-        # TODO: tohle určitě nějak optimalizovat,vždy se tahá celý list
         if latest:
             return self.__get_file_packages(records_values)[0]
         return self.__get_file_packages(records_values)
