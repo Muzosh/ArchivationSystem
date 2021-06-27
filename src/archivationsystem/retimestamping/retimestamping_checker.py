@@ -45,7 +45,7 @@ def publish_retimestamping_tasks(files_to_retimestamp: list, config: dict):
 
 # This method can be done via 1 sql script
 def get_files_to_retimestamp(db_config):
-    files_to_retimestamp = {}
+    files_to_retimestamp = set()
     with MysqlConnection(db_config) as db_connection:
         db_handler = DatabaseHandler(db_connection)
         file_ids = db_handler.get_all_file_id()
@@ -62,7 +62,7 @@ def get_files_to_retimestamp(db_config):
 
 def compare_expiration_date(file_rec: ArchivedFile):
     difference = file_rec.ExpirationDateTS - datetime.now()
-    return difference < 2
+    return difference.days < 2
 
 
 def run_checker_controller(config):

@@ -12,7 +12,9 @@ def main():
 
     val = common_utils.validate_signature(b"ahoj", signature, crt.public_key())
 
-    print(val)
+    assert val
+    
+    print("test successful")
 
 
 if __name__ == "__main__":
