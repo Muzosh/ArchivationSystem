@@ -1,0 +1,14 @@
+composer.*
+.drone.yml
+.git
+.github
+.gitignore
+krankerl.toml
+l10n/.gitkeep
+.nextcloudignore
+.php_cs.dist
+README.md
+screenshots
+tests
+.tx
+vendor
