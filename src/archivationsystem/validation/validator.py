@@ -347,7 +347,7 @@ class Validator:
         cert_path = self._get_file_path_from_dir(
             certs_folder_path, "signing_cert.pem"
         )
-        
+
         logger.debug("loading certificate from path %s", str(cert_path))
         cert = common_utils.get_certificate(cert_path)
         common_utils.validate_signature(

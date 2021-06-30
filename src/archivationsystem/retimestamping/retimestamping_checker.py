@@ -78,7 +78,7 @@ def run_checker_controller(config):
     if len(list_of_files_to_retimestamp) == 0:
         print("Done")
         return
-    
+
     print("Publishing tasks...")
     publish_retimestamping_tasks(list_of_files_to_retimestamp, config)
     print("Done")

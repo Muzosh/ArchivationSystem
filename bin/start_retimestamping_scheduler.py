@@ -5,7 +5,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 from archivationsystem.common.yaml_parser import parse_yaml_config
 from archivationsystem.retimestamping.retimestamping_checker import (
-    run_checker_controller
+    run_checker_controller,
 )
 
 
@@ -35,7 +35,10 @@ def parse_arguments(args):
 def run_retimestamping_checker(config, hours):
     scheduler = BlockingScheduler()
     scheduler.add_job(
-        func=run_checker_controller, trigger="interval", args=[config], hours=hours
+        func=run_checker_controller,
+        trigger="interval",
+        args=[config],
+        hours=hours,
     )
     scheduler.start()
 
