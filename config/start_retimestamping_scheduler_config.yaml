@@ -1,16 +1,16 @@
 db_config:
-  user: "test_user"
-  password: "Password1"
+  user: "ncadmin"
+  password: "ncadmin"
   host: "127.0.0.1"
-  database: "archivation_system_db"
+  database: "archivationsystem"
 
 rabbitmq_connection:
   host: "localhost"
-  virtual_host: "/"
+  virtual_host: "archivationsystem"
   port: "5672"
   credentials:
-    name: guest
-    password: guest #default credentials
+    name: "ncadmin"
+    password: "ncadmin" #default credentials
   enable_ssl:
     false
     #Server_name_id: str #optional
@@ -29,6 +29,6 @@ rabbitmq_info:
 # rabbitmq_logging:
 #   host: "localhost"
 #   port: "5672"
-#   username: guest
-#   password: guest #default credentials
+#   username: "ncadmin"
+#   password: "ncadmin" #default credentials
 #   logging_level: INFO

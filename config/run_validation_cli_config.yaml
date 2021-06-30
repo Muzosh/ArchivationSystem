@@ -1,10 +1,10 @@
 rabbitmq_connection:
   host: "localhost"
-  virtual_host: "/"
+  virtual_host: "archivationsystem"
   port: "5672"
   credentials:
-    name: guest
-    password: guest #default credentials
+    name: "ncadmin"
+    password: "ncadmin" #default credentials
   enable_ssl:
     false
     #Server_name_id: str #optional
@@ -17,12 +17,12 @@ rabbitmq_connection:
 
 rabbitmq_info:
   # consumer_ID: "Archivator"
-  task_queue: "retimestamping"
+  task_queue: "validation"
   # control_exchange: "control"
 
 # rabbitmq_logging:
 #   host: "localhost"
 #   port: "5672"
-#   username: guest
-#   password: guest #default credentials
+#   username: "ncadmin"
+#   password: "ncadmin" #default credentials
 #   logging_level: INFO

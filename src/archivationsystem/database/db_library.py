@@ -1,13 +1,12 @@
 import base64
-import logging
 from contextlib import closing
 from datetime import datetime
 
 from mysql.connector import MySQLConnection
 
-from ..common.exception_wrappers import db_lib_exception_wrapper
+from ..common.exception_wrappers import db_handler_exception_wrapper
 from ..common.exceptions import RecordDoesNotExistCustomException
-from .archivation_file import ArchivedFile
+from .archived_file import ArchivedFile
 from .file_package import FilePackage
 from .sql_queries import (
     QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVED_FILES,
@@ -17,16 +16,13 @@ from .sql_queries import (
     QUERY_INSERT_INTO_ARCHIVED_FILES,
     QUERY_INSERT_INTO_FILE_PACKAGES,
     QUERY_SELECT_FILEID,
-    QUERY_UPDATE_EXPIRATION_DATE_ARCHIVED_FILES,
+    QUERY_UPDATE_EXPIRATION_DATE_TS_ARCHIVED_FILES,
 )
 
-# from typing import overload - was unused
+# from typing import overload - was unusedw
 
 
-logger = logging.getLogger("Archivation System")
-
-
-class MysqlConnection(object):
+class MysqlConnection:
     """
     This class is responsible for creating managed connection to database
     It takes argument config which has to be in format like:
@@ -53,7 +49,7 @@ class MysqlConnection(object):
             self.db_connection.close()
 
 
-class DatabaseLibrary(object):
+class DatabaseHandler:
     """
     database api library, responsible for querying and
     formating data from/to DB
@@ -63,7 +59,7 @@ class DatabaseLibrary(object):
     def __init__(self, db_connection: MysqlConnection):
         self.db_connecton = db_connection
 
-    @db_lib_exception_wrapper
+    @db_handler_exception_wrapper
     def get_all_file_id(self):
         """
         Retruns a list of fileIDs in DB
@@ -71,26 +67,25 @@ class DatabaseLibrary(object):
         id_list = []
         ids = self._execute_select_query(QUERY_SELECT_FILEID)
         if len(ids) == 0:
+            # TODO: might be better to just return empty list
             raise RecordDoesNotExistCustomException("NO RECORD IDS")
         for id in ids:
             id_list.append(id[0])
         return id_list
 
-    @db_lib_exception_wrapper
-    def update_expiration_date_specific_record(
-        self, file_id, new_date: datetime
-    ):
+    @db_handler_exception_wrapper
+    def update_expiration_date_ts(self, file_id: int, new_date: datetime):
         """
         It will update expiration date for specific record in
         table archived files
         """
         self._execute_insert_query(
-            self._get_formated_query_update_expiration_date(
+            self._get_formated_query_update_expiration_date_ts(
                 file_id, new_date.strftime("%Y-%m-%d %H:%M:%S")
             )
         )
 
-    @db_lib_exception_wrapper
+    @db_handler_exception_wrapper
     def add_full_records(
         self, archf_data: ArchivedFile, filep_data: FilePackage
     ):
@@ -100,11 +95,11 @@ class DatabaseLibrary(object):
         """
         self.create_new_record_archived_file(archf_data)
         filep_data.ArchivedFileID = self.get_file_id_archived_file_rec(
-            archf_data.OwnerName, archf_data.FileName
+            archf_data.FileName, archf_data.OwnerName
         )
         self.create_new_record_file_package(filep_data)
 
-    @db_lib_exception_wrapper
+    @db_handler_exception_wrapper
     def create_new_record_archived_file(self, archf_data: ArchivedFile):
         """
         This will create new record in database for table ArchivedFiles
@@ -113,7 +108,7 @@ class DatabaseLibrary(object):
             self._get_formated_insert_query_archived_files(archf_data)
         )
 
-    @db_lib_exception_wrapper
+    @db_handler_exception_wrapper
     def create_new_record_file_package(self, filep_data: FilePackage):
         """
         This will create new record in database for table FilePackages.
@@ -122,7 +117,7 @@ class DatabaseLibrary(object):
             self._get_formated_query_insert_file_packages(filep_data)
         )
 
-    @db_lib_exception_wrapper
+    @db_handler_exception_wrapper
     def get_records_by_file_id(self, file_id, latest=False):
         """
         Thiw function will gather data from ArchivedFiles table
@@ -138,7 +133,7 @@ class DatabaseLibrary(object):
             self.get_file_package_records(file_id, latest),
         )
 
-    @db_lib_exception_wrapper
+    @db_handler_exception_wrapper
     def get_specific_archived_file_record_by_file_id(self, file_id: int):
         """
         This will get data based on fileID from ArchivedFiles table
@@ -154,7 +149,7 @@ class DatabaseLibrary(object):
             )
         return self.__get_archived_files(record_values)[0]
 
-    @db_lib_exception_wrapper
+    @db_handler_exception_wrapper
     def get_file_package_records(self, archived_file_id: str, latest=False):
         """
         This method will get all FilePackage records from DB assinged
@@ -178,8 +173,8 @@ class DatabaseLibrary(object):
             return self.__get_file_packages(records_values)[0]
         return self.__get_file_packages(records_values)
 
-    @db_lib_exception_wrapper
-    def get_file_id_archived_file_rec(self, owner_name: str, file_name: str):
+    @db_handler_exception_wrapper
+    def get_file_id_archived_file_rec(self, file_name: str, owner_name: str):
         """
         This will return FileID of file that matches owner_name and file_name
         """
@@ -197,13 +192,13 @@ class DatabaseLibrary(object):
         return QUERY_INSERT_INTO_ARCHIVED_FILES.format(
             arch_f.FileName,
             arch_f.OwnerName,
-            str(arch_f.OriginalFilePath),
-            str(arch_f.PackageStoragePath),
-            repr(base64.b64encode(arch_f.OriginFileHashSha512))[1:],
+            arch_f.OriginalFilePath,
+            arch_f.PackageStoragePath,
+            repr(base64.b64encode(arch_f.OriginFileHashSha512).decode()),
             arch_f.TimeOfFirstTS.strftime("%Y-%m-%d %H:%M:%S"),
-            repr(base64.b64encode(arch_f.SigningCert))[1:],
-            repr(base64.b64encode(arch_f.SignatureHashSha512))[1:],
-            repr(base64.b64encode(arch_f.Package0HashSha512))[1:],
+            repr(base64.b64encode(arch_f.SigningCert).decode()),
+            repr(base64.b64encode(arch_f.SignatureHashSha512).decode()),
+            repr(base64.b64encode(arch_f.Package0HashSha512).decode()),
             arch_f.ExpirationDateTS.strftime("%Y-%m-%d %H:%M:%S"),
         )
 
@@ -218,8 +213,8 @@ class DatabaseLibrary(object):
     def _get_formated_query_record_archived_files_by_file_id(self, file_id):
         return QUERY_ALL_COLUMNS_ON_FILEID_ARCHIVED_FILES.format(file_id)
 
-    def _get_formated_query_update_expiration_date(self, file_id, date):
-        return QUERY_UPDATE_EXPIRATION_DATE_ARCHIVED_FILES.format(
+    def _get_formated_query_update_expiration_date_ts(self, file_id, date):
+        return QUERY_UPDATE_EXPIRATION_DATE_TS_ARCHIVED_FILES.format(
             date, file_id
         )
 
@@ -229,8 +224,8 @@ class DatabaseLibrary(object):
             file_p.ArchivedFileID,
             file_p.TimeStampingAuthority,
             file_p.IssuingDate.strftime("%Y-%m-%d %H:%M:%S"),
-            repr(base64.b64encode(file_p.TsaCert))[1:],
-            repr(base64.b64encode(file_p.PackageHashSha512))[1:],
+            repr(base64.b64encode(file_p.TsaCert).decode()),
+            repr(base64.b64encode(file_p.PackageHashSha512).decode()),
         )
 
     def _get_formated_query_select_all_c_file_package(self, file_id):

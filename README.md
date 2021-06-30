@@ -1,27 +1,24 @@
+[comment]: #
+# Archivation system for Nextcloud
 
-# Archivation-System
-
-  
-
-### This repository host my bachelor degree program for Achivation files
-
-
-## Dependencies
-
-* you must have installed python3 and PyPI
-* install all dependencies 
-	 > pip3 install -r requirments.txt
-* download, install and setup RabbitMQ
+## Installation
+1. install python3 and PyPI (pip)
+1. (optional) create virtual environment and activate it
+1. install archivationsystem with dependencies:
+    > pip install \<path-to-this-project\>
+1. (optional) install linter, formatter, etc. used for this project
+    > pip install flake8 black rope bandit
+1. TODO: download, install and setup RabbitMQ
 	* run rabbitmq server
 	* setup control exchange
 	* setup exchange and queue for logs (default: exchange - log, queue - logs)
 	* you will have to setup queues for every worker
-* you must create mysql database
-    * you can use scripts inside ./database/sql_scripts
+* create mysql tables
+    * scripts are available in ./data/sqlscripts
 
   
 
-## How to execute
+## TODO How to execute
 
 * all scripts for creating tasks and executing workers are in root of the project
 * all scripts needs their config files

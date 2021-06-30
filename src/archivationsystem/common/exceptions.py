@@ -1,22 +1,22 @@
-class DbApiCustomException(Exception):
+class DbHandlerCustomException(Exception):
     """
-    Wrapps all exceptions from module db_library
+    Wrapps all exceptions from module db_handler
     """
 
     pass
 
 
-class RecordDoesNotExistCustomException(DbApiCustomException):
+class RecordDoesNotExistCustomException(DbHandlerCustomException):
     "Given record doesnt exist in database"
     pass
 
 
-class RecordCanNotBeInsertedCustomException(DbApiCustomException):
+class RecordCanNotBeInsertedCustomException(DbHandlerCustomException):
     "given record  cannot be inserted into database"
     pass
 
 
-class DatabaseSyntaxErrorCustomException(DbApiCustomException):
+class DatabaseSyntaxErrorCustomException(DbHandlerCustomException):
     """
     Wrapps all syntax exceptions from Database
     """
@@ -24,7 +24,7 @@ class DatabaseSyntaxErrorCustomException(DbApiCustomException):
     pass
 
 
-class DatabaseErrorCustomException(DbApiCustomException):
+class DatabaseErrorCustomException(DbHandlerCustomException):
     """
     Wrapps all function exceptions from Database
     """
@@ -32,7 +32,7 @@ class DatabaseErrorCustomException(DbApiCustomException):
     pass
 
 
-class WrongRecordFormatCustomException(DbApiCustomException):
+class WrongRecordFormatCustomException(DbHandlerCustomException):
     """
     Data in record object doesnt have correct format for db insert
     """

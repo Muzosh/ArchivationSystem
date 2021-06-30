@@ -1,23 +1,23 @@
 rabbitmq_logging:
   host: "localhost"
   port: "5672"
-  username: guest
-  password: guest #default credentials
+  username: "ncadmin"
+  password: "ncadmin" #default credentials
   logging_level: INFO
 
 db_config:
-  user: "test_user"
-  password: "Password1"
+  user: "ncadmin"
+  password: "ncadmin"
   host: "127.0.0.1"
-  database: "archivation_system_db"
+  database: "archivationsystem"
 
 rabbitmq_connection:
   host: "localhost"
-  virtual_host: "/"
+  virtual_host: "archivationsystem"
   port: "5672"
   credentials:
-    name: guest
-    password: guest #default credentials
+    name: "ncadmin"
+    password: "ncadmin" #default credentials
   enable_ssl:
     false
     #Server_name_id: str #optional
@@ -29,14 +29,14 @@ rabbitmq_connection:
     #CA_data: str-path
 
 rabbitmq_info:
-  consumer_ID: "Retimestamper"
+  # consumer_ID: "Retimestamper"
   task_queue: "retimestamping"
-  control_exchange: "control"
+  # control_exchange: "control"
 
 retimestamping_info:
-  validity_length: 2
-  TSA_info: #inforamtions about TSA ... in this case freetsa.org
-    url: "https://freetsa.org/tsr"
-    tsa_cert_path: "/home/server/Downloads/tsa.crt"
-    tsa_crl_url: "https://www.freetsa.org/crl/root_ca.crl" #url to download crl for verification
-    tsa_ca_pem: "/home/server/Downloads/cacert.pem"
+  validity_length_in_years: 2
+  TSA_info:
+    tsa_tsr_url: "https://freetsa.org/tsr"
+    tsa_cert_path: "/home/nextcloudadmin/certs/tsa.crt"
+    tsa_ca_pem: "/home/nextcloudadmin/certs/cacert.pem"
+    tsa_crl_url: "https://www.freetsa.org/crl/root_ca.crl"

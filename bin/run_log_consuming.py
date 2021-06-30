@@ -1,21 +1,30 @@
-# Script just for consuming and printing logs from run
+# Script just for consuming and printing logs
 import pika
-from pika.credentials import PlainCredentials
 
 
 def listen_logs():
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(
-            host="localhost",
-            credentials=PlainCredentials(username="guest", password="guest"),
-        )
+    connection_values = pika.ConnectionParameters(
+        host="192.168.100.112",
+        port="5672",
+        virtual_host="archivationsystem",
+        credentials=pika.PlainCredentials(
+            "ncadmin",
+            "ncadmin",
+            erase_on_connect=True,
+        ),
+        ssl_options=None,
     )
+
+    connection = pika.BlockingConnection(connection_values)
+
     channel = connection.channel()
 
     def callback_print_message(ch, method, properties, body):
-        print(body)
+        print(body.decode())
 
-    channel.basic_consume("logs", callback_print_message, auto_ack=True)
+    channel.basic_consume(
+        "archivation_system_logging", callback_print_message, auto_ack=True
+    )
     channel.start_consuming()
 
 

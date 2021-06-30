@@ -1,23 +1,23 @@
 rabbitmq_logging:
   host: "localhost"
   port: "5672"
-  username: guest
-  password: guest #default credentials
+  username: "ncadmin"
+  password: "ncadmin" #default credentials
   logging_level: INFO
 
 db_config:
-  user: "test_user"
-  password: "Password1"
+  user: "ncadmin"
+  password: "ncadmin"
   host: "127.0.0.1"
-  database: "archivation_system_db"
+  database: "archivationsystem"
 
 rabbitmq_connection:
   host: "localhost"
-  virtual_host: "/"
+  virtual_host: "archivationsystem"
   port: "5672"
   credentials:
-    name: guest
-    password: guest #default credentials
+    name: "ncadmin"
+    password: "ncadmin" #default credentials
   enable_ssl:
     false
     #Server_name_id: str #optional
@@ -29,14 +29,14 @@ rabbitmq_connection:
     #CA_data: str-path
 
 rabbitmq_info:
-  consumer_ID: "Validator"
+  # consumer_ID: "Validator"
   task_queue: "validation"
-  control_exchange: "control"
+  # control_exchange: "control"
 
 validation_info:
   contact:
     email_server: "smtp.gmail.com" #email server
-    sender_email: "" #email for sending results -> recommended separated email just for tihs
+    sender_email: ""
     sender_password: ""
     email: "" #contact email if validation wasnt successfull
     phone: "xxxxxxxxxxxxx" #contact phone number if validation wasnt successfull
@@ -48,7 +48,7 @@ validation_info:
     #  username: 'server'
     #  key_filepath: '' #path to authetication key for sftp
     #  password: '' #password to for authetication key file
-  TSA_info: #inforamtions about TSA ... in this case freetsa.org
-    url: "https://freetsa.org/tsr"
-    tsa_cert_path: "/home/server/Downloads/tsa.crt"
-    tsa_ca_pem: "/home/server/Downloads/cacert.pem"
+  TSA_info:
+    tsa_tsr_url: "https://freetsa.org/tsr"
+    tsa_cert_path: "/home/nextcloudadmin/certs/tsa.crt"
+    tsa_ca_pem: "/home/nextcloudadmin/certs/cacert.pem"

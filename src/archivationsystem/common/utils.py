@@ -1,4 +1,3 @@
-import base64
 import os
 import tarfile
 from shutil import copy2, rmtree
@@ -35,7 +34,7 @@ def load_data(path):
     return data
 
 
-def get_timestamp(info: dict, file_hash):
+def get_timestamp(tsa_info: dict, file_hash):
     """
     Function responsible for getting timstamp
     for bits of data. It is creating connection to
@@ -45,14 +44,14 @@ def get_timestamp(info: dict, file_hash):
     create connection.
     dictionary example:
     TSA_info: {
-        url: 'https://freetsa.org/tsr'
+        tsa_tsr_url: 'https://freetsa.org/tsr'
         tsa_cert_path: '/home/server/Downloads/tsa.crt'
     }
     Returns bytes with timestamp tsr
     """
-    tsa_cert = load_data(info["tsa_cert_path"])
+    tsa_cert = load_data(tsa_info["tsa_cert_path"])
     remote_tsa = rfc3161ng.RemoteTimestamper(
-        url=info["url"], certificate=tsa_cert, hashname="sha512"
+        url=tsa_info["tsa_tsr_url"], certificate=tsa_cert, hashname="sha512"
     )
     data_ts = remote_tsa(file_hash)
     return data_ts
@@ -64,7 +63,7 @@ def verify_timestamp(ts, data, info: dict):
     It will create connection to timestamping authority
     which need dictionary like this
     TSA_info: {
-        url: 'https://freetsa.org/tsr'
+        tsa_tsr_url: 'https://freetsa.org/tsr'
         tsa_cert_path: '/home/server/Downloads/tsa.crt'
     }
     It need data that was timestamped and bytes with ts
@@ -72,25 +71,22 @@ def verify_timestamp(ts, data, info: dict):
     """
     tsa_cert = load_data(info["tsa_cert_path"])
     remote_tsa = rfc3161ng.RemoteTimestamper(
-        url=info["url"], certificate=tsa_cert, hashname="sha512"
+        url=info["tsa_tsr_url"], certificate=tsa_cert, hashname="sha512"
     )
     return remote_tsa.check(ts, data)
 
 
 def sign_data(data, private_key):
     """
-    Function for signig byte data with given
-    private key. It will return signature base64encoded
+    Function for signig byte data with given private key.
     """
-    signature = base64.b64encode(
-        private_key.sign(
-            data,
-            asymmetric.padding.PSS(
-                mgf=asymmetric.padding.MGF1(hashes.SHA512()),
-                salt_length=asymmetric.padding.PSS.MAX_LENGTH,
-            ),
-            hashes.SHA512(),
-        )
+    signature = private_key.sign(
+        data,
+        asymmetric.padding.PSS(
+            mgf=asymmetric.padding.MGF1(hashes.SHA512()),
+            salt_length=asymmetric.padding.PSS.MAX_LENGTH,
+        ),
+        hashes.SHA512(),
     )
     return signature
 
@@ -148,13 +144,12 @@ def store_signature(path, signature):
 def validate_signature(data, signature, public_key):
     """
     Function for validating signatature of data.
-    It need public key, base64encoded signature
-    and signed bytes data
+    It need public key, signature and signed bytes data
     returns true if signature is valid else it will raise exception
     """
 
     public_key.verify(
-        base64.b64decode(signature),
+        signature,
         data,
         asymmetric.padding.PSS(
             mgf=asymmetric.padding.MGF1(hashes.SHA512()),
@@ -165,20 +160,19 @@ def validate_signature(data, signature, public_key):
     return True
 
 
-def create_tar_file_from_dir(dir_path, tar_file_path):
+def create_tar_file_from_dir(dir_path, tar_path):
     """
     This will create tar archive, without any compression,
     from files within directory and deletes original files
     to remove duplicits. It will returns path to created
     tar archive
     """
-    with tarfile.open(tar_file_path, "w:") as tarf:  # uncompressed mode
+    with tarfile.open(tar_path, "w:") as tarf:  # uncompressed mode
         for f in os.listdir(dir_path):
             fp = os.path.join(dir_path, f)
-            if not fp == tar_file_path:
+            if not fp == tar_path:
                 tarf.add(fp, arcname=f)
                 delete_file(fp)
-    return tar_file_path
 
 
 def delete_file(path):
@@ -192,7 +186,7 @@ def delete_file(path):
         os.remove(path)
 
 
-def hash_file(hash, file_path):
+def get_file_hash(hash, file_path):
     """
     Function for hashing file on given path.
     It needs to get specify hash function which
@@ -288,12 +282,12 @@ def validate_certificate(crl_content, ca_file_path):
         )
 
 
-def get_current_crl(url):
+def get_current_crl(tsa_crl_url):
     """
-    Function for downloading crl from url and returning
+    Function for downloading crl from tsa_crl_url and returning
     content.
     """
-    res = requests.get(url)
+    res = requests.get(tsa_crl_url)
     return res.content
 
 

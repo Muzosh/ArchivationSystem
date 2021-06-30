@@ -1,23 +1,23 @@
 rabbitmq_logging:
   host: "localhost"
   port: "5672"
-  username: guest
-  password: guest #default credentials
+  username: "ncadmin"
+  password: "ncadmin" #default credentials
   logging_level: INFO
 
 db_config:
-  user: "test_user"
-  password: "Password1"
-  host: "127.0.0.1"
-  database: "archivation_system_db"
+  user: "ncadmin"
+  password: "ncadmin"
+  host: "localhost"
+  database: "archivationsystem"
 
 rabbitmq_connection:
   host: "localhost"
-  virtual_host: "/"
+  virtual_host: "archivationsystem"
   port: "5672"
   credentials:
-    name: guest
-    password: guest #default credentials
+    name: "ncadmin"
+    password: "ncadmin" #default credentials
   enable_ssl:
     false
     #Server_name_id: str #optional
@@ -29,17 +29,17 @@ rabbitmq_connection:
     #CA_data: str-path
 
 rabbitmq_info:
-  consumer_ID: "Archivator"
+  # consumer_ID: "Archivator"
   task_queue: "archivation"
-  control_exchange: "control"
+  # control_exchange: "control"
 
 archivation_system_info:
-  storage_dir_path: "/home/server/Desktop/" #path where archived files will be stored
-  validity_length: 2
+  archivation_storage_path: "/home/nextcloudadmin/results/" #path where archived files will be stored
+  validity_length_in_years: 2
   signing_info:
-    certificate_path: "/home/server/Desktop/cert.pem" #path to folder where certificate together with crl is stored
-    private_key_path: "/home/server/Desktop/key.pem"
-    pk_password: "Password1"
+    certificate_path: "/home/nextcloudadmin/certs/myCert.crt"
+    private_key_path: "/home/nextcloudadmin/certs/myCert.key"
+    pk_password: "ncadmin"
     crl_path: "" #not for now
   remote_access:
     False #information to be able to get files from remote nextcloud server or if you want to run this localy get false
@@ -49,8 +49,8 @@ archivation_system_info:
     #  username: 'server'
     #  key_filepath: '' #path to authetication key for sftp
     #  password: '' #password to for authetication key file
-  TSA_info: #inforamtions about TSA ... in this case freetsa.org
-    url: "https://freetsa.org/tsr"
-    tsa_cert_path: "/home/server/Downloads/tsa.crt"
+  TSA_info:
+    tsa_tsr_url: "https://freetsa.org/tsr"
+    tsa_cert_path: "/home/nextcloudadmin/certs/tsa.crt"
+    tsa_ca_pem: "/home/nextcloudadmin/certs/cacert.pem"
     tsa_crl_url: "https://www.freetsa.org/crl/root_ca.crl" #url to download crl for verification
-    tsa_ca_pem: "/home/server/Downloads/cacert.pem"

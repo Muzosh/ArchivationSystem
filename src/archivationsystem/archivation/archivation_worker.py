@@ -5,14 +5,14 @@ import logging
 from ..common.exception_wrappers import task_exceptions_wrapper
 from ..common.exceptions import WrongTaskCustomException
 from ..common.setup_logger import setup_logger
-from ..database.db_library import DatabaseLibrary, MysqlConnection
+from ..database.db_library import DatabaseHandler, MysqlConnection
 from ..rabbitmq_connection.task_consumer import (
     ConnectionMaker,
     TaskConsumer,
 )
 from .archiver import Archiver
 
-logger = logging.getLogger("Archivation System")
+logger = logging.getLogger("archivation_system_logging")
 
 
 class ArchivationWorker:
@@ -25,10 +25,10 @@ class ArchivationWorker:
     in exception wrappers
     """
 
-    def __init__(self, config):
+    def __init__(self, config: dict):
         self.db_config = config.get("db_config")
-        self.rmq_config = config.get("rabbitmq_connection")
-        self.connection = ConnectionMaker(self.rmq_config)
+        self.rabbitmq_connection = config.get("rabbitmq_connection")
+        self.connection = ConnectionMaker(self.rabbitmq_connection)
         self.task_consumer = TaskConsumer(
             self.connection, config.get("rabbitmq_info")
         )
@@ -36,48 +36,45 @@ class ArchivationWorker:
         self.archivation_config = config.get("archivation_system_info")
 
     def run(self):
-        logger.info(
-            "[archivation_worker] starting archivation worker consumer"
-        )
+        logger.info("starting archivation task consumer")
         self.task_consumer.start()
 
     @task_exceptions_wrapper
-    def archive(self, body):
+    def archive(self, jbody):
         """
         Callback function which will be executed on task.
         It needs correct task body otherwise it will throw
         WrongTask Exception
         """
-        logger.info(
-            "[archivation_worker] recieved task with body: %s", str(body)
-        )
+        logger.debug("recieved task with body: %s", str(jbody))
 
-        logger.debug("[archivation_worker] creation of database connection")
+        logger.info("creating database connection")
         with MysqlConnection(self.db_config) as db_connection:
-            db_lib = DatabaseLibrary(db_connection)
-            archiver = Archiver(db_lib, self.archivation_config)
-            path, owner = self._parse_message_body(body)
-            logger.info(
-                "[archivation_worker] executing archivation of file, path: %s"
-                " , owner: %s",
-                str(path),
+            db_handler = DatabaseHandler(db_connection)
+            archiver = Archiver(db_handler, self.archivation_config)
+            file_path, owner = self._parse_message_body(jbody)
+
+            logger.debug(
+                "executing archivation of file id and owner: %s and %s",
+                str(file_path),
                 str(owner),
             )
-            result = archiver.archive(path, owner)
-            logger.info("[archivation_worker] validation was finished")
+            result = archiver.archive(file_path, owner)
         return result
 
-    def _parse_message_body(self, body):
-        body = json.loads(body)
-        if not body.get("task") == "Archivation":
-            logger.warning(
-                "incorrect task label for archivation worker, body: %s",
-                str(body),
+    def _parse_message_body(self, jbody):
+        body = json.loads(jbody)
+        if not body.get("task") == "archive":
+            logger.error(
+                "incorrect task for archivation worker: task=%s",
+                str(body.get("task")),
             )
-            raise WrongTaskCustomException("task is not for this worker")
-        file_path = body.get("file_path")
-        owner = body.get("owner_name")
-        return file_path, owner
+            raise WrongTaskCustomException(
+                "incorrect task for archivation worker: task={}".format(
+                    str(body.get("task"))
+                ),
+            )
+        return body.get("file_path"), body.get("owner_name")
 
 
 def run_worker(config):
