@@ -1,30 +1,45 @@
 [comment]: #
 # Archivation system for Nextcloud
 
-## Installation
+## Installation and setup
 1. install python3 and PyPI (pip)
 1. (optional) create virtual environment and activate it
 1. install archivationsystem with dependencies:
     > pip install \<path-to-this-project\>
 1. (optional) install linter, formatter, etc. used for this project
     > pip install flake8 black rope bandit
-1. TODO: download, install and setup RabbitMQ
-	* run rabbitmq server
-	* setup control exchange
-	* setup exchange and queue for logs (default: exchange - log, queue - logs)
-	* you will have to setup queues for every worker
-* create mysql tables
+1. download, install and setup RabbitMQ
+    * install via *./docs/rabbimq_setup.sh* installation script
+    * run commands:
+    ```
+    sudo rabbitmq−plugins enable rabbitmq_management
+
+    sudo rabbitmqctl add_user „ncadmin“ (password „ncadmin“)
+
+    sudo rabbitmqctl add_vhost archivationsystem
+
+    sudo rabbitmqctl set_permissions -p „archivationsystem“ „ncadmin“ „.*“ „.*“ „.*“
+
+    sudo rabbitmqctl set_user_tags ncadmin administrator
+    ```
+    * create queues: `archivation`, `failed_tasks`, `validation`, `retimestamping`, `archivation_system_logging` 
+	* create new exchange:
+        * `name = log`
+        * `type = topic`
+        * `bind = archivation_system_logging`
+        * `routing_key = archivation_system_logging.*`
+1. create mysql tables
     * scripts are available in ./data/sqlscripts
+1. in Nextcloud app store install "Workflow external scripts" and **replace** *\<location-to-nextcloud\>/apps/workflow_script* contents with contents in *./data/workflow_script* (including all hidden files)
 
   
 
 ## TODO How to execute
+* all executable scripts are in *./bin* folder
+    * .py must be executed with python interpreter and appropriate config file path from *./config* must be set as parameter
+* there is usage print when you run script without correct parameters
 
-* all scripts for creating tasks and executing workers are in root of the project
-* all scripts needs their config files
-* there is usage print when you run script with correct parameters
-
-
+TODO:
 * if you are planning to run archivation and validation worker remotly from file storage:
     * setup sftp connection - create keys etc...
     * setup login only using keys
@@ -32,15 +47,11 @@
     * ensure that user which is used for remote login has access rigths to given directories
 
 ### Config formats
-* examples can be found in folder ./example_config
 * Inside all config examples are comments explaining different fields
-* Inside testing_config.yaml are comments for the most common config parameters
-* All configs needs part for rabbitmq connection
-* General config example for tasks is test_config.yaml
 * All workers have defined their own configs
 * db_config part can be formated by this -> https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html
 
-### Task Scripts
+### TODO Task Scripts
 
 | name                   | purpose                                                                                                                           |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
@@ -50,7 +61,7 @@
 
 
 
-### Workers
+### TODO Workers
 
 | name                     | purpose                                                   |
 | ------------------------ | --------------------------------------------------------- |
