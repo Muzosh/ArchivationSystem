@@ -171,6 +171,8 @@
         - publish/subscribe servery+klienty (tohle by mohlo nahradit rabbitmq)
         - mail client (na posílání reportu z validation)
         - SSH client (pokud by archivační systém běžel na jiném stroji?)
+    - Twisted nakonec nebude nejlepší volba - jedná se spíše o toolkit pro tvorbu internetové aplikace, předávání zpráv na localhostu není ideální
+    - vypadá to, že rabbitMQ nakonec bude nejlepší možnost z kategorie *open-source message brokerů*
 1. **obecně mi rabbitmq připadá až moc zbytečně složitý**
     - hlavně jeho architektura, ale i implementace v pythonu
     - v podstatě je *v tomto projektu využit hlavně určitý workaround*, jak nepoužívat exchanges
