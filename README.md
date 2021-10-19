@@ -39,7 +39,7 @@
     * .py must be executed with python interpreter and appropriate config file path from *./config* must be set as parameter
 * there is usage print when you run script without correct parameters
 
-TODO:
+Outdated:
 * if you are planning to run archivation and validation worker remotly from file storage:
     * setup sftp connection - create keys etc...
     * setup login only using keys
@@ -51,7 +51,7 @@ TODO:
 * All workers have defined their own configs
 * db_config part can be formated by this -> https://dev.mysql.com/doc/connector-python/en/connector-python-connectargs.html
 
-### TODO Task Scripts
+### (Outdated) Task Scripts
 
 | name                   | purpose                                                                                                                           |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
@@ -61,7 +61,7 @@ TODO:
 
 
 
-### TODO Workers
+### (Outdated) Workers
 
 | name                     | purpose                                                   |
 | ------------------------ | --------------------------------------------------------- |
