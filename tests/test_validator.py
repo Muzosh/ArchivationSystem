@@ -14,7 +14,7 @@ def main():
     with MysqlConnection(db_config) as db_connection:
         db_lib = DatabaseHandler(db_connection)
         valdator = Validator(db_lib, config["validation_info"])
-        result = valdator.validate("20", ["muzosak@seznam.cz"])
+        result = valdator.validate("1", ["muzosak@seznam.cz"])
     print(result)
 
 

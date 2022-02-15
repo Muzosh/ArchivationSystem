@@ -8,9 +8,9 @@ def main():
        "/home/nextcloudadmin/certs/myCert.key", "ncadmin"
     )
 
-    signature = common_utils.sign_data(b"ahoj", prkey)
+    signature = common_utils.sign_data(b"test", prkey)
 
-    val = common_utils.validate_signature(b"ahoj", signature, crt.public_key())
+    val = common_utils.validate_signature(b"test", signature, crt.public_key())
 
     assert val
     

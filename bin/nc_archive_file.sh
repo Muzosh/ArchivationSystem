@@ -2,7 +2,7 @@
 # BEFORE RUNNING FILL IN THESE VARIABLES (absolute path is recommended)
 
 # SELECT THE CORRECT PYTHON INTERPRETER (where archivationsystem and other required packages are installed)
-PYTHON_INTERPRETER=/home/nextcloudadmin/ArchivationSystem/venv/bin/python3.9
+PYTHON_INTERPRETER=/home/nextcloudadmin/ArchivationSystem/venv/bin/python3.10.2
 
 # SELECT make_archivation_task.py FILE LOCATION
 SCRIPT_LOCATION=/home/nextcloudadmin/ArchivationSystem/bin/make_archivation_task.py

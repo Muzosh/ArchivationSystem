@@ -15,7 +15,7 @@ def main():
     with MysqlConnection(db_config) as db_connection:
         db_lib = DatabaseHandler(db_connection)
         archiver = Archiver(db_lib, config_for_archiver)
-        result = archiver.archive("/home/nextcloudadmin/samples/markdown.md", "muzikant2")
+        result = archiver.archive("/home/nextcloudadmin/ArchivationSystem/data/samples/markdown.md", "muzikant2")
         print(result)
 
 

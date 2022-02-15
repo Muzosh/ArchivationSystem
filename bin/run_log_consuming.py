@@ -4,7 +4,7 @@ import pika
 
 def listen_logs():
     connection_values = pika.ConnectionParameters(
-        host="192.168.100.112",
+        host="localhost",
         port="5672",
         virtual_host="archivationsystem",
         credentials=pika.PlainCredentials(

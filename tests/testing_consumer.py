@@ -16,7 +16,7 @@ logger = logging.getLogger("archivation_system_logging")
 def run():
     connection = ConnectionMaker(
         {
-            "host": "192.168.100.112",
+            "host": "192.169.0.3",
             "virtual_host": "archivationsystem",
             "port": "5672",
             "credentials": {
@@ -41,7 +41,7 @@ def run():
 def send_messages():
     c_maker = ConnectionMaker(
         {
-            "host": "192.168.100.112",
+            "host": "192.169.0.3",
             "virtual_host": "archivationsystem",
             "port": "5672",
             "credentials": {
@@ -80,7 +80,7 @@ def job(body):
 def main():
     setup_logger(
         {
-            "host": "192.168.100.112",
+            "host": "192.169.0.3",
             "port": "5672",
             "username": "ncadmin",
             "password": "ncadmin",

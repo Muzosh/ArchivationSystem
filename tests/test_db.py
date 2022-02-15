@@ -1,4 +1,5 @@
 # from contextlib import closing - was unused
+import random, string
 from datetime import datetime
 from archivationsystem.common.exceptions import (
     RecordDoesNotExistCustomException,
@@ -24,7 +25,14 @@ def main():
         db_handler = DatabaseHandler(db_connection)
 
         new_file_id = None
-        new_owner = None
+        new_owner = "".join(
+            random.choices(
+                string.ascii_uppercase
+                + string.ascii_lowercase
+                + string.digits,
+                k=12,
+            )
+        )
 
         try:
             all_file_id = db_handler.get_all_file_id()
@@ -42,8 +50,7 @@ def main():
             column_data={
                 "FileID": None,
                 "FileName": "test_db.py",
-                "OwnerName": new_owner
-                or str(int(last_archived_file.OwnerName) + 1),
+                "OwnerName": new_owner,
                 "OriginalFilePath": "/bla/bla/XY.txt",
                 "PackageStoragePath": "/bla2/bla2/XY.pkg",
                 "OriginFileHashSha512": b"thisistestbytesequence",
@@ -141,7 +148,7 @@ def main():
             and isinstance(recs[1], list)
             and len(recs[1]) == 2
         )
-        
+
         print("finished successfully")
 
 

@@ -14,7 +14,7 @@ def main():
     with MysqlConnection(db_config) as db_connection:
         db_lib = DatabaseHandler(db_connection)
         retimestamper = Retimestamper(db_lib, config["retimestamping_info"])
-        result = retimestamper.retimestamp(file_id=20)
+        result = retimestamper.retimestamp(file_id=1)
     
     assert result == "OK"
 

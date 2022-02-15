@@ -19,7 +19,7 @@ def main():
     assert validation is None
 
     hash_to_ts = sha512()
-    hash_to_ts.update(b"Ahoj")
+    hash_to_ts.update(b"Test")
 
     ts = utils.get_timestamp(
         parsed_config["retimestamping_info"]["TSA_info"],
