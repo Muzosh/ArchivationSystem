@@ -3,8 +3,8 @@ from pathlib import Path  # , PurePath - was unused
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from archivationsystem.common.yaml_parser import parse_yaml_config
-from archivationsystem.retimestamping.retimestamping_checker import (
+from archivingsystem.common.yaml_parser import parse_yaml_config
+from archivingsystem.retimestamping.retimestamping_checker import (
     run_checker_controller,
 )
 

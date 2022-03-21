@@ -1,17 +1,17 @@
 # from contextlib import closing - was unused
 import random, string
 from datetime import datetime
-from archivationsystem.common.exceptions import (
+from archivingsystem.common.exceptions import (
     RecordDoesNotExistCustomException,
 )
 
 # from common.yaml_parser import parse_yaml_config - was unused
-from archivationsystem.database.archived_file import ArchivedFile
-from archivationsystem.database.db_library import (
+from archivingsystem.database.archived_file import ArchivedFile
+from archivingsystem.database.db_library import (
     DatabaseHandler,
     MysqlConnection,
 )
-from archivationsystem.database.file_package import FilePackage
+from archivingsystem.database.file_package import FilePackage
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
         "user": "ncadmin",
         "password": "ncadmin",
         "host": "127.0.0.1",
-        "database": "archivationsystem",
+        "database": "archivingsystem",
     }
     with MysqlConnection(db_config) as db_connection:
         db_handler = DatabaseHandler(db_connection)

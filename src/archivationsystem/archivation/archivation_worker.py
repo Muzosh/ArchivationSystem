@@ -12,10 +12,10 @@ from ..rabbitmq_connection.task_consumer import (
 )
 from .archiver import Archiver
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
-class ArchivationWorker:
+class ArchivingWorker:
     """
     Worker class responsible for creating
     rabbitmq connection and creating task consumer.
@@ -33,10 +33,10 @@ class ArchivationWorker:
             self.connection, config.get("rabbitmq_info")
         )
         self.task_consumer.set_callback(self.archive)
-        self.archivation_config = config.get("archivation_system_info")
+        self.archiving_config = config.get("archiving_system_info")
 
     def run(self):
-        logger.info("starting archivation task consumer")
+        logger.info("starting archiving task consumer")
         self.task_consumer.start()
 
     @task_exceptions_wrapper
@@ -51,11 +51,11 @@ class ArchivationWorker:
         logger.info("creating database connection")
         with MysqlConnection(self.db_config) as db_connection:
             db_handler = DatabaseHandler(db_connection)
-            archiver = Archiver(db_handler, self.archivation_config)
+            archiver = Archiver(db_handler, self.archiving_config)
             file_path, owner = self._parse_message_body(jbody)
 
             logger.debug(
-                "executing archivation of file id and owner: %s and %s",
+                "executing archiving of file id and owner: %s and %s",
                 str(file_path),
                 str(owner),
             )
@@ -66,11 +66,11 @@ class ArchivationWorker:
         body = json.loads(jbody)
         if not body.get("task") == "archive":
             logger.error(
-                "incorrect task for archivation worker: task=%s",
+                "incorrect task for archiving worker: task=%s",
                 str(body.get("task")),
             )
             raise WrongTaskCustomException(
-                "incorrect task for archivation worker: task={}".format(
+                "incorrect task for archiving worker: task={}".format(
                     str(body.get("task"))
                 ),
             )
@@ -82,5 +82,5 @@ def run_worker(config):
     This function will setup logger and execute worker
     """
     setup_logger(config.get("rabbitmq_logging"))
-    arch_worker = ArchivationWorker(config)
+    arch_worker = ArchivingWorker(config)
     arch_worker.run()

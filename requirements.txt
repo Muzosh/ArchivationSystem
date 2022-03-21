@@ -17,4 +17,4 @@ rope
 bandit
 
 # not available in PyPI - need to be installed locally, see README
-# archivationsystem
+# archivingsystem

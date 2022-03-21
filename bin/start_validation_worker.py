@@ -1,14 +1,14 @@
 import sys
 from pathlib import Path, PurePath
 
-from archivationsystem.common.yaml_parser import parse_yaml_config
-from archivationsystem.validation.validation_worker import run_worker
+from archivingsystem.common.yaml_parser import parse_yaml_config
+from archivingsystem.validation.validation_worker import run_worker
 
 
 def raise_system_exit():
     raise SystemExit(
         f"Usage: {sys.argv[0]} (-c | --config) <path to yaml config for"
-        " archivation worker>"
+        " archiving worker>"
     )
 
 

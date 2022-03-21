@@ -1,5 +1,5 @@
 -- Create tables
-use archivationsystem;
+use archivingsystem;
 CREATE table ArchivedFiles(
 	FileID INT auto_increment NOT NULL,
 	FileName NVARCHAR(255) NOT NULL,

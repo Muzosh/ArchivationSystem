@@ -57,7 +57,7 @@ class WrongTaskCustomException(WorkerCustomException):
     pass
 
 
-class ArchivationOperationCustomException(Exception):
+class ArchivingOperationCustomException(Exception):
     """
     Wrapps all exceptions during archiving, retimestamping or validating
     """
@@ -66,7 +66,7 @@ class ArchivationOperationCustomException(Exception):
 
 
 class FileTransferNotSuccesfullCustomException(
-    ArchivationOperationCustomException
+    ArchivingOperationCustomException
 ):
     """
     Raised when there was error during sftp transfer of files
@@ -75,7 +75,7 @@ class FileTransferNotSuccesfullCustomException(
     pass
 
 
-class RemoteTimemperCustomException(ArchivationOperationCustomException):
+class RemoteTimemperCustomException(ArchivingOperationCustomException):
     """
     Raised when remote timestamping authority cannot be reached
     """
@@ -83,7 +83,7 @@ class RemoteTimemperCustomException(ArchivationOperationCustomException):
     pass
 
 
-class ArchivedFileNotValidCustomException(ArchivationOperationCustomException):
+class ArchivedFileNotValidCustomException(ArchivingOperationCustomException):
     """
     Raised when validation of archived file wasnt successful
     """
@@ -91,7 +91,7 @@ class ArchivedFileNotValidCustomException(ArchivationOperationCustomException):
     pass
 
 
-class OriginalFileNotValidError(ArchivationOperationCustomException):
+class OriginalFileNotValidError(ArchivingOperationCustomException):
     """
     Raised when archived file and original file is no longer same
     """
@@ -100,7 +100,7 @@ class OriginalFileNotValidError(ArchivationOperationCustomException):
 
 
 class WrongPathToArchivedFileCustomException(
-    ArchivationOperationCustomException
+    ArchivingOperationCustomException
 ):
     """
     Raised when path to archived file is incorrect
@@ -109,7 +109,7 @@ class WrongPathToArchivedFileCustomException(
     pass
 
 
-class TimestampInvalidCustomException(ArchivationOperationCustomException):
+class TimestampInvalidCustomException(ArchivingOperationCustomException):
     """
     Raised when timestamp is not valid
     """
@@ -117,7 +117,7 @@ class TimestampInvalidCustomException(ArchivationOperationCustomException):
     pass
 
 
-class DigestsNotMatchedCustomException(ArchivationOperationCustomException):
+class DigestsNotMatchedCustomException(ArchivingOperationCustomException):
     """
     Raised when 2 digests should matched but they dont
     """
@@ -125,7 +125,7 @@ class DigestsNotMatchedCustomException(ArchivationOperationCustomException):
     pass
 
 
-class FileNotInDirectoryCustomException(ArchivationOperationCustomException):
+class FileNotInDirectoryCustomException(ArchivingOperationCustomException):
     """
     Raised when file is not in directory in
     which it should be
@@ -134,7 +134,7 @@ class FileNotInDirectoryCustomException(ArchivationOperationCustomException):
     pass
 
 
-class CertificateNotValidCustomException(ArchivationOperationCustomException):
+class CertificateNotValidCustomException(ArchivingOperationCustomException):
     """
     Raised when certificates are not same
     """
@@ -143,7 +143,7 @@ class CertificateNotValidCustomException(ArchivationOperationCustomException):
 
 
 class UnableToGetRemoteFileDigestCustomException(
-    ArchivationOperationCustomException
+    ArchivingOperationCustomException
 ):
     """
     Raised when there is problem to get remote file digest

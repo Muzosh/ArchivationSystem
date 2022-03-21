@@ -24,7 +24,7 @@
     - Bude vhodné otestovat, jak moc je výkon systému s tímto nastavením ovlivněn (dochází totiž k vyššímu ukládání a čtení dat na disk) při vyšším provozu.
 1. **Otestovat možnosti využití jedné sdílené instance pomocné třídy pro všechny procesy.**
     - Každý vytvořený proces spojený s různými operacemi si vytváří vlastní instanci podpůrné třídy. Bude vhodné otestovat možnost využití pouze jedné instance a její sdílení mezi různé procesy.
-    - Např. třída ArchivationWorker ve funkci archive() pokaždé vytváří třídu Archiver. Je třeba otestovat, zda by nestačilo mít pouze jednu instanci třídy Archiver a tu globálně využívat ve funkci archive().
+    - Např. třída ArchivingWorker ve funkci archive() pokaždé vytváří třídu Archiver. Je třeba otestovat, zda by nestačilo mít pouze jednu instanci třídy Archiver a tu globálně využívat ve funkci archive().
 1. **Redefinovat logickou strukturu některých funkcí v projektu.**
     - Na několika místech v projektu je aktuální logika taková, že se na konci funkce vrací např. „OK“ nebo se vyvolá výjimka, která se ve wrapperu odchytí a hodnota funkce se změní například na „FAILED“ nebo „KNOWN_ERROR“.
     - Bude vhodné se zamyslet, zda neexistuje jednodušší logická struktura operací, která staticky nevrací na konci funkce jeden konkrétní řetězec (např. by funkce nemusely vracet nic a chybové stavy by se odchytávaly výše).
@@ -32,12 +32,12 @@
 1. **Redefinovat konfiguraci všech operací v archivačním systému.**
     - Aktuální systém konfigurace operací je příliš zmatečný, neefektivní a v některých případech duplicitní. Při každém spuštění je třeba poskytnout plnou cestu ke konfiguračnímu souborů, který se velmi pravděpodobně nebude často měnit.
     - Návrhy řešení:
-        - přesunout konfiguraci na statické místo (např. /etc/archivationsystem/config), odkud si ji spouštěcí skripty budou načítat nebo
+        - přesunout konfiguraci na statické místo (např. /etc/archivingsystem/config), odkud si ji spouštěcí skripty budou načítat nebo
         - vložit konfiguraci přímo do spouštěcích skriptů.
         - V obou případech bude nutné zajistit odstranění duplicity (např. informace o TSA se využívají ve více spouštěcích skriptech).
 1. **Opravit nekonzistenci mezi zapisováním a čtením dat z databáze archivačního systému.**
     - Při zapisování dat do FilePackages se ve funkci _get_formated_query_insert_file_packages nad PackageHashSha512 automaticky kóduje do base64, nicméně při čtení dat z databáze se ten samý atribut již nedekóduje a programátor na to musí myslet sám.
-1. **Opravit funkci `src/archivationsystem/validation/validator._extract_tar_to_temp_dir()`**
+1. **Opravit funkci `src/archivingsystem/validation/validator._extract_tar_to_temp_dir()`**
     - na jednom místě se volá se špatným počtem argumentů
 
 ### Strukturální návrhy

@@ -1,12 +1,12 @@
 from hashlib import sha512
 
-from archivationsystem.common import utils
-from archivationsystem.common.yaml_parser import parse_yaml_config
+from archivingsystem.common import utils
+from archivingsystem.common.yaml_parser import parse_yaml_config
 
 
 def main():
     parsed_config = parse_yaml_config(
-        "/home/nextcloudadmin/ArchivationSystem/config/start_retimestamping_worker_config.yaml"
+        "/home/nextcloudadmin/ArchivingSystem/config/start_retimestamping_worker_config.yaml"
     )
 
     crl = utils.get_current_crl(

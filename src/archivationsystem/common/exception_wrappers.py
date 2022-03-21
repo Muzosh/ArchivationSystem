@@ -4,7 +4,7 @@ from functools import wraps
 from mysql.connector import errors as mysql_errors
 
 from .exceptions import (
-    ArchivationOperationCustomException,
+    ArchivingOperationCustomException,
     CertificateNotValidCustomException,
     DatabaseErrorCustomException,
     DatabaseSyntaxErrorCustomException,
@@ -17,7 +17,7 @@ from .exceptions import (
 # from requests.exceptions import ConnectionError - was unused
 
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 def db_handler_exception_wrapper(function):
@@ -74,9 +74,9 @@ def task_exceptions_wrapper(function):
                 stack_info=True,
             )
             result = "FAILED"
-        except (ArchivationOperationCustomException):  # as e: - was unused
+        except (ArchivingOperationCustomException):  # as e: - was unused
             logger.exception(
-                "Exception occured during archivation, verification or"
+                "Exception occured during archiving, verification or"
                 " timestamping process",
                 exc_info=True,
                 stack_info=True,

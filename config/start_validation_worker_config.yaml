@@ -9,11 +9,11 @@ db_config:
   user: "ncadmin"
   password: "ncadmin"
   host: "127.0.0.1"
-  database: "archivationsystem"
+  database: "archivingsystem"
 
 rabbitmq_connection:
   host: "localhost"
-  virtual_host: "archivationsystem"
+  virtual_host: "archivingsystem"
   port: "5672"
   credentials:
     name: "ncadmin"

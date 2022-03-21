@@ -6,8 +6,8 @@ from pathlib import Path, PurePath
 from uuid import uuid4
 
 import pika
-from archivationsystem.common.yaml_parser import parse_yaml_config
-from archivationsystem.rabbitmq_connection.task_consumer import ConnectionMaker
+from archivingsystem.common.yaml_parser import parse_yaml_config
+from archivingsystem.rabbitmq_connection.task_consumer import ConnectionMaker
 
 
 def format_task_message(file_path, owner):
@@ -75,7 +75,7 @@ def main():
     """
     takes 2 system arguments:
         -c | --config   => configuration file path for connection to Rabbitmq
-        -fp | --filePath     => file path for archivation
+        -fp | --filePath     => file path for archiving
     """
     config_path, file_path, owner = parse_arguments(sys.argv[1:])
 

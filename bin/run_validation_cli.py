@@ -6,8 +6,8 @@ from uuid import uuid4
 import pika
 from yaml import YAMLError
 
-from archivationsystem.common.yaml_parser import parse_yaml_config
-from archivationsystem.rabbitmq_connection.task_consumer import ConnectionMaker
+from archivingsystem.common.yaml_parser import parse_yaml_config
+from archivingsystem.rabbitmq_connection.task_consumer import ConnectionMaker
 
 
 def format_task_message(file_info: list, recipients: list):

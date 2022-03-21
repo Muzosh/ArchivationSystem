@@ -1,6 +1,6 @@
 rabbitmq_connection: #connection parameters for connecting to rabbitmq
   host: "localhost"
-  virtual_host: "archivationsystem"
+  virtual_host: "archivingsystem"
   port: "5672"
   credentials:
     name: "ncadmin"
@@ -17,7 +17,7 @@ rabbitmq_connection: #connection parameters for connecting to rabbitmq
 
 rabbitmq_info:
   # consumer_ID: "Archivator" #queue for control task for worker
-  task_queue: "archivation" #rabbitmq queue from where data will be consumed or sent
+  task_queue: "archiving" #rabbitmq queue from where data will be consumed or sent
   # control_exchange: "control"
 
 # rabbitmq_logging: #connection parameters for connecting logger to rabbitmq where the logs will be sent

@@ -9,11 +9,11 @@ db_config:
   user: "ncadmin"
   password: "ncadmin"
   host: "localhost"
-  database: "archivationsystem"
+  database: "archivingsystem"
 
 rabbitmq_connection:
   host: "localhost"
-  virtual_host: "archivationsystem"
+  virtual_host: "archivingsystem"
   port: "5672"
   credentials:
     name: "ncadmin"
@@ -30,11 +30,11 @@ rabbitmq_connection:
 
 rabbitmq_info:
   # consumer_ID: "Archivator"
-  task_queue: "archivation"
+  task_queue: "archiving"
   # control_exchange: "control"
 
-archivation_system_info:
-  archivation_storage_path: "/home/nextcloudadmin/results/" #path where archived files will be stored
+archiving_system_info:
+  archiving_storage_path: "/home/nextcloudadmin/results/" #path where archived files will be stored
   validity_length_in_years: 2
   signing_info:
     certificate_path: "/home/nextcloudadmin/certs/myCert.crt"

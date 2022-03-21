@@ -4,7 +4,7 @@ from python_logging_rabbitmq import RabbitMQHandlerOneWay
 
 
 def setup_logger(config: dict):
-    logger = logging.getLogger("archivation_system_logging")
+    logger = logging.getLogger("archiving_system_logging")
     logger.addHandler(
         RabbitMQHandlerOneWay(
             host=config.get("host"),
@@ -12,7 +12,7 @@ def setup_logger(config: dict):
             username=config.get("username"),
             password=config.get("password"),
             connection_params={
-                "virtual_host": "archivationsystem",
+                "virtual_host": "archivingsystem",
             },
         )
     )

@@ -14,7 +14,7 @@ from ..common.exceptions import FileTransferNotSuccesfullCustomException
 from ..database.archived_file import ArchivedFile
 from ..database.file_package import FilePackage
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 class Archiver:
@@ -26,16 +26,16 @@ class Archiver:
 
     on init it needs database library object and
     configuration file. Example could be found
-    in example_config and it needs archivation_system_info part
+    in example_config and it needs archiving_system_info part
     """
 
     def __init__(self, db_handler, config: dict):
         self.db_handler = db_handler
-        self.archivation_config = config
+        self.archiving_config = config
         self.archived_file_rec = ArchivedFile()
         self.file_pack_record = FilePackage()
-        self.archivation_storage_path = self.archivation_config.get(
-            "archivation_storage_path"
+        self.archiving_storage_path = self.archiving_config.get(
+            "archiving_storage_path"
         )
 
     def archive(self, file_path, owner):
@@ -48,7 +48,7 @@ class Archiver:
         and it needs original owner name
         """
         logger.debug(
-            "executing file archivation with arguments: file_path=%s,"
+            "executing file archiving with arguments: file_path=%s,"
             " owner=%s",
             str(file_path),
             str(owner),
@@ -76,11 +76,11 @@ class Archiver:
 
     def _validate_certificates(self):
         logger.info("validating certificates")
-        # path_ca = self.archivation_config["signing_info"]["certificate_path"]
-        # path_crl = self.archivation_config["signing_info"]["crl_path"]
-        path_tsa_ca_pem = self.archivation_config["TSA_info"]["tsa_ca_pem"]
+        # path_ca = self.archiving_config["signing_info"]["certificate_path"]
+        # path_crl = self.archiving_config["signing_info"]["crl_path"]
+        path_tsa_ca_pem = self.archiving_config["TSA_info"]["tsa_ca_pem"]
         self.tsa_current_crl = common_utils.get_current_crl(
-            self.archivation_config["TSA_info"]["tsa_crl_url"]
+            self.archiving_config["TSA_info"]["tsa_crl_url"]
         )
         common_utils.validate_certificate(
             self.tsa_current_crl, path_tsa_ca_pem
@@ -97,31 +97,31 @@ class Archiver:
 
     def _assign_tsa_info(self):
         logger.info("assigning TSA info to file package")
-        self.file_pack_record.TimeStampingAuthority = self.archivation_config[
+        self.file_pack_record.TimeStampingAuthority = self.archiving_config[
             "TSA_info"
         ]["tsa_tsr_url"]
         cert = common_utils.get_certificate(
-            self.archivation_config["TSA_info"]["tsa_cert_path"]
+            self.archiving_config["TSA_info"]["tsa_cert_path"]
         )
         self.file_pack_record.TsaCert = base64.b64encode(
             cert.public_bytes(Encoding.PEM)
         )
 
     def _transfer_file(self, file_path):
-        if self.archivation_config["remote_access"] is False:
-            logger.info("transfering local file to archivation storage")
+        if self.archiving_config["remote_access"] is False:
+            logger.info("transfering local file to archiving storage")
             (
                 self.dst_file_path,
                 self.archived_file_rec.PackageStoragePath,
                 self.archived_file_rec.OriginFileHashSha512,
-            ) = self._transfer_local_file_to_archivation_storage(file_path)
+            ) = self._transfer_local_file_to_archiving_storage(file_path)
         else:
-            logger.info("transfer remote file to archivation storage")
+            logger.info("transfer remote file to archiving storage")
             (
                 self.dst_file_path,
                 self.archived_file_rec.PackageStoragePath,
                 self.archived_file_rec.OriginFileHashSha512,
-            ) = self._transfer_remote_file_to_archivation_storage(file_path)
+            ) = self._transfer_remote_file_to_archiving_storage(file_path)
 
         logger.info("validating data transfer")
         self._validate_data_transfer(
@@ -160,7 +160,7 @@ class Archiver:
 
         logger.info("obtaining signing certificate")
         self.archived_file_rec.SigningCert = common_utils.get_certificate(
-            self.archivation_config["signing_info"]["certificate_path"]
+            self.archiving_config["signing_info"]["certificate_path"]
         ).public_bytes(Encoding.PEM)
 
     def _make_ts1(self):
@@ -181,10 +181,10 @@ class Archiver:
         dir_path = common_utils.create_new_dir_in_location(
             self.archived_file_rec.PackageStoragePath, "certificate_files"
         )
-        path_ca = self.archivation_config["signing_info"]["certificate_path"]
-        # path_crl = self.archivation_config["signing_info"]["crl_path"]
-        path_tsa_cert = self.archivation_config["TSA_info"]["tsa_cert_path"]
-        path_tsa_ca_pem = self.archivation_config["TSA_info"]["tsa_ca_pem"]
+        path_ca = self.archiving_config["signing_info"]["certificate_path"]
+        # path_crl = self.archiving_config["signing_info"]["crl_path"]
+        path_tsa_cert = self.archiving_config["TSA_info"]["tsa_cert_path"]
+        path_tsa_ca_pem = self.archiving_config["TSA_info"]["tsa_ca_pem"]
 
         common_utils.copy_file_to_dir(path_ca, dir_path, "signing_cert.pem")
         # common_utils.copy_file_to_dir(  # used for own CRL validation
@@ -216,7 +216,7 @@ class Archiver:
             )
         except Exception as e:
             logger.info(
-                "unable to write database record of archivation, deleting"
+                "unable to write database record of archiving, deleting"
                 " created archived file"
             )
             common_utils.delete_file(self.archived_file_rec.PackageStoragePath)
@@ -225,7 +225,7 @@ class Archiver:
     def _create_timestamp(self, fhash, ts_name):
         logger.debug("obtaining timestamp for file hash %s", str(fhash))
         timestamp = common_utils.get_timestamp(
-            self.archivation_config["TSA_info"], fhash
+            self.archiving_config["TSA_info"], fhash
         )
         logger.info(
             "copying %s to %s",
@@ -237,14 +237,14 @@ class Archiver:
         )
         return timestamp
 
-    def _transfer_local_file_to_archivation_storage(self, file_path):
+    def _transfer_local_file_to_archiving_storage(self, file_path):
         logger.debug("getting hash of file: %s", str(file_path))
         origin_hash = common_utils.get_file_hash(sha512, file_path)
         new_dir_path = common_utils.create_new_dir_in_location(
-            self.archivation_storage_path, str(uuid4())
+            self.archiving_storage_path, str(uuid4())
         )
         logger.debug(
-            "created archivation directory path: %s",
+            "created archiving directory path: %s",
             str(new_dir_path),
         )
         dst_file_path = common_utils.copy_file_to_dir(
@@ -253,13 +253,13 @@ class Archiver:
         logger.debug("file copied, path: %s", str(dst_file_path))
         return dst_file_path, new_dir_path, origin_hash
 
-    def _transfer_remote_file_to_archivation_storage(self, file_path):
+    def _transfer_remote_file_to_archiving_storage(self, file_path):
         logger.debug("trying to connect to remote storage")
         error_count = 0
         try:
             with closing(
                 common_utils.get_sftp_connection(
-                    self.archivation_config["remote_access"]
+                    self.archiving_config["remote_access"]
                 )
             ) as sftp_connection:
                 logger.info("sftp connection created")
@@ -267,10 +267,10 @@ class Archiver:
                     sftp_connection, file_path, sha512
                 )
                 copy_dir_path = common_utils.create_new_dir_in_location(
-                    self.archivation_storage_path, str(uuid4())
+                    self.archiving_storage_path, str(uuid4())
                 )
                 logger.debug(
-                    "created archivation directory path: %s",
+                    "created archiving directory path: %s",
                     str(copy_dir_path),
                 )
 
@@ -298,7 +298,7 @@ class Archiver:
         return dst_file_path, copy_dir_path, origin_hash
 
     def _get_expiration_date(self, ts):
-        years = self.archivation_config["validity_length_in_years"]
+        years = self.archiving_config["validity_length_in_years"]
         time = rfc3161ng.get_timestamp(ts)
         logger.debug(
             "expiration length of timestamp1 was set to %s",
@@ -328,8 +328,8 @@ class Archiver:
     def _make_b64signature(self, hash):
         logger.debug("getting private key")
         pk = common_utils.get_private_key(
-            self.archivation_config["signing_info"]["private_key_path"],
-            self.archivation_config["signing_info"]["pk_password"],
+            self.archiving_config["signing_info"]["private_key_path"],
+            self.archiving_config["signing_info"]["pk_password"],
         )
         logger.debug("signing data")
         return base64.b64encode(common_utils.sign_data(hash, pk))

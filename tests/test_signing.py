@@ -1,4 +1,4 @@
-from archivationsystem.common import utils as common_utils
+from archivingsystem.common import utils as common_utils
 
 
 def main():

@@ -15,7 +15,7 @@ from ..common.exceptions import (
 )
 from ..database.file_package import FilePackage
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 class Retimestamper:
@@ -40,18 +40,18 @@ class Retimestamper:
         of archived file which will be retimestamped
         """
         (
-            archivation_storage_path,
+            archiving_storage_path,
             current_package_hash,
             package_id,
         ) = self._verify_existing_package(file_id)
         new_timestamp = self._create_new_timestamp(
-            archivation_storage_path, current_package_hash
+            archiving_storage_path, current_package_hash
         )
         tar_path = os.path.join(
-            archivation_storage_path, "PackageF{}.tar".format(package_id)
+            archiving_storage_path, "PackageF{}.tar".format(package_id)
         )
         common_utils.create_tar_file_from_dir(
-            archivation_storage_path,
+            archiving_storage_path,
             tar_path,
         )
         self._fill_package_record(file_id, new_timestamp, tar_path)
@@ -74,7 +74,7 @@ class Retimestamper:
                 file_id
             )
         )
-        archivation_storage_path = archived_file.PackageStoragePath
+        archiving_storage_path = archived_file.PackageStoragePath
 
         logger.info("getting latest package file record from db")
         latest_file_package = self.db_handler.get_file_package_records(
@@ -86,7 +86,7 @@ class Retimestamper:
             timestamp,
             timestamped_file_hash,
             tar_package_path,
-        ) = self._get_ts_data_from_package(archivation_storage_path)
+        ) = self._get_ts_data_from_package(archiving_storage_path)
 
         logger.info("verifying latest package hash")
         current_package_hash = common_utils.get_file_hash(
@@ -103,19 +103,19 @@ class Retimestamper:
         if verification_result is not True:
             logger.exception(
                 "Last timestamp of package in path %s is invalid",
-                str(archivation_storage_path),
+                str(archiving_storage_path),
             )
             raise TimestampInvalidCustomException(
                 "Last timestamp of package is invalid"
             )
         return (
-            archivation_storage_path,
+            archiving_storage_path,
             current_package_hash,
             latest_file_package.PackageID,
         )
 
     def _create_new_timestamp(
-        self, archivation_storage_path, current_package_hash
+        self, archiving_storage_path, current_package_hash
     ):
         logger.info("getting new package timestamp")
         new_timestamp = common_utils.get_timestamp(
@@ -123,9 +123,9 @@ class Retimestamper:
         )
         logger.info("storing timestamp to storage directory..")
         common_utils.store_ts_data(
-            new_timestamp, archivation_storage_path, "timestamp"
+            new_timestamp, archiving_storage_path, "timestamp"
         )
-        self._store_used_cert_files(archivation_storage_path)
+        self._store_used_cert_files(archiving_storage_path)
         return new_timestamp
 
     def _fill_package_record(self, file_id, new_timestamp, tar_path):
@@ -211,13 +211,13 @@ class Retimestamper:
             ),
         )
 
-    def _store_used_cert_files(self, archivation_storage_path):
+    def _store_used_cert_files(self, archiving_storage_path):
         logger.debug(
             "storing used certificate files to directory: %s",
-            str(archivation_storage_path),
+            str(archiving_storage_path),
         )
         dir_path = common_utils.create_new_dir_in_location(
-            archivation_storage_path, "certificate_files"
+            archiving_storage_path, "certificate_files"
         )
         path_tsa_cert = self.config["TSA_info"]["tsa_cert_path"]
         path_tsa_ca_pem = self.config["TSA_info"]["tsa_ca_pem"]

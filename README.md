@@ -1,13 +1,13 @@
 [comment]: #
 
-# Archivation system for Nextcloud
+# Archiving system for Nextcloud
 
 ## Installation and setup
 
-1. `cd && git clone https://github.com/Muzosh/ArchivationSystem.git`
+1. `cd && git clone https://github.com/Muzosh/ArchivingSystem.git`
 1. install python3 (any version should be fine, 3.10.2 works 100%) and PyPI (pip)
 1. (optional) create virtual environment and activate it
-1. install archivationsystem with dependencies:
+1. install archivingsystem with dependencies:
     > pip install \<path-to-this-project\>
 1. (optional) install linter, formatter, etc. used for this project
     > pip install flake8 black rope bandit
@@ -21,23 +21,23 @@
 
     sudo rabbitmqctl add_user "ncadmin" # (password "ncadmin")
 
-    sudo rabbitmqctl add_vhost archivationsystem
+    sudo rabbitmqctl add_vhost archivingsystem
 
-    sudo rabbitmqctl set_permissions -p "archivationsystem" "ncadmin" ".*" ".*" ".*"
+    sudo rabbitmqctl set_permissions -p "archivingsystem" "ncadmin" ".*" ".*" ".*"
 
     sudo rabbitmqctl set_user_tags ncadmin administrator
     ```
 
-    - create queues (archivation system vhost, everything else default) in management console (`http://{node-hostname}:15672/`): `archivation`, `failed_tasks`, `validation`, `retimestamping`, `archivation_system_logging`
+    - create queues (archiving system vhost, everything else default) in management console (`http://{node-hostname}:15672/`): `archiving`, `failed_tasks`, `validation`, `retimestamping`, `archiving_system_logging`
 
 1. create new exchange:
-    - `virtual host = archivation system`
+    - `virtual host = archiving system`
     - `name = log`
     - `type = topic`
     - else default
 1. after that, open newly created exchange and add binding
-    - `to_queue = archivation_system_logging`
-    - `routing_key = archivation_system_logging.*`
+    - `to_queue = archiving_system_logging`
+    - `routing_key = archiving_system_logging.*`
 1. create mysql tables
     - `sudo mysql -v -uroot -p < path-to-sql-file`
     - scripts are available in ./data/sqlscripts, run then one by one
@@ -51,7 +51,7 @@
    - in Nextcloud web interface go to settings -> Administration -> Flow -> Run script and add new Flow:
        - When: Tag assigned
        - and: File system tag - is tagged with - "archive" (need to create this tag on some dummy file first)
-       - script to run: `sh /home/nextcloudadmin/ArchivationSystem/bin/nc_archive_file.sh %p %o`
+       - script to run: `sh /home/nextcloudadmin/ArchivingSystem/bin/nc_archive_file.sh %p %o`
    - setup Cron
        - in Nextcloud web interface go to settings -> Administration -> Basic settings -> Background jobs: select Cron
        - `sudo crontab -u www-data -e` -> select some editor, nano for example
@@ -68,7 +68,7 @@
    - check file `bin/nc_archive_file.sh` and input correct python path
 1. try to run and debug all tests in `tests`
     - some of them might need some tweaks (like changing FileID etc.)
-    - use some database management tool to also view records in `archivationsystem` database
+    - use some database management tool to also view records in `archivingsystem` database
 
 ## TODO How to execute
 
@@ -78,7 +78,7 @@
 
 Outdated:
 
-- if you are planning to run archivation and validation worker remotly from file storage:
+- if you are planning to run archiving and validation worker remotly from file storage:
     - setup sftp connection - create keys etc...
     - setup login only using keys
     - setup proper data to configs
@@ -94,7 +94,7 @@ Outdated:
 
 | name                     | purpose                                                                                                                           |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
-| make_archivation_task.py | Manual creation of task for archivation of given file                                                                             |
+| make_archiving_task.py | Manual creation of task for archiving of given file                                                                             |
 | retimestamping_task.py   | Regular checking of timestamps expiration dates in database and creating a task for those which validity is ending within 24 ours |
 | validation_task.py       | Interactive interface for creating tasks for validation of archived files                                                         |
 
@@ -102,6 +102,6 @@ Outdated:
 
 | name                     | purpose                                                   |
 | ------------------------ | --------------------------------------------------------- |
-| archivation_worker.py    | responsible for consuming archivation tasks from rabbitmq |
+| archiving_worker.py    | responsible for consuming archiving tasks from rabbitmq |
 | retimestamping_worker.py | responsible for consuming tasks for retimestamping        |
 | validation_worker.py     | responsible for validation of archived files              |

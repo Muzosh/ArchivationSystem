@@ -26,7 +26,7 @@ from ..common.exceptions import (
     WrongTaskCustomException,
 )
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 class Validator:

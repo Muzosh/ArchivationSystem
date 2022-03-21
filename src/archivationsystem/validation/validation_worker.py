@@ -11,7 +11,7 @@ from .validator import Validator
 # from contextlib import closing - was unused
 
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 class ValidationWorker:

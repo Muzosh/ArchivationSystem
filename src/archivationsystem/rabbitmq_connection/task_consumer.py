@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import pika
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 class ConnectionMaker:

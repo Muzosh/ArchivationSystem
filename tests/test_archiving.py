@@ -1,6 +1,6 @@
-from archivationsystem.archivation.archiver import Archiver
-from archivationsystem.common.yaml_parser import parse_yaml_config
-from archivationsystem.database.db_library import (
+from archivingsystem.archiving.archiver import Archiver
+from archivingsystem.common.yaml_parser import parse_yaml_config
+from archivingsystem.database.db_library import (
     DatabaseHandler,
     MysqlConnection,
 )
@@ -8,14 +8,14 @@ from archivationsystem.database.db_library import (
 
 def main():
     config = parse_yaml_config(
-        r"/home/nextcloudadmin/ArchivationSystem/config/start_archivation_worker_config.yaml"
+        r"/home/nextcloudadmin/ArchivingSystem/config/start_archiving_worker_config.yaml"
     )
-    config_for_archiver = config.get("archivation_system_info")
+    config_for_archiver = config.get("archiving_system_info")
     db_config = config.get("db_config")
     with MysqlConnection(db_config) as db_connection:
         db_lib = DatabaseHandler(db_connection)
         archiver = Archiver(db_lib, config_for_archiver)
-        result = archiver.archive("/home/nextcloudadmin/ArchivationSystem/data/samples/markdown.md", "muzikant2")
+        result = archiver.archive("/home/nextcloudadmin/ArchivingSystem/data/samples/markdown.md", "muzikant2")
         print(result)
 
 

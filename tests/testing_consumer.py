@@ -4,20 +4,20 @@ import pika
 from uuid import uuid4
 import json
 
-from archivationsystem.common.setup_logger import setup_logger
-from archivationsystem.rabbitmq_connection.task_consumer import (
+from archivingsystem.common.setup_logger import setup_logger
+from archivingsystem.rabbitmq_connection.task_consumer import (
     ConnectionMaker,
     TaskConsumer,
 )
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 def run():
     connection = ConnectionMaker(
         {
             "host": "192.169.0.3",
-            "virtual_host": "archivationsystem",
+            "virtual_host": "archivingsystem",
             "port": "5672",
             "credentials": {
                 "name": "ncadmin",
@@ -30,7 +30,7 @@ def run():
         connection,
         {
             "consumer_ID": "TestConsumerID",
-            "task_queue": "archivation",
+            "task_queue": "archiving",
             "control_exchange": "control",
         },
     )
@@ -42,7 +42,7 @@ def send_messages():
     c_maker = ConnectionMaker(
         {
             "host": "192.169.0.3",
-            "virtual_host": "archivationsystem",
+            "virtual_host": "archivingsystem",
             "port": "5672",
             "credentials": {
                 "name": "ncadmin",
@@ -63,7 +63,7 @@ def send_messages():
         time.sleep(1)
         channel.basic_publish(
             exchange="",
-            routing_key="archivation",
+            routing_key="archiving",
             properties=pika.BasicProperties(correlation_id=str(uuid4())),
             body=json.dumps(task_message),
         )

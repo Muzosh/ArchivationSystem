@@ -6,7 +6,7 @@ from ..common.exceptions import WrongRecordFormatCustomException
 # from pathlib import Path, PurePath - was unused
 
 
-logger = logging.getLogger("archivation_system_logging")
+logger = logging.getLogger("archiving_system_logging")
 
 
 class ArchivedFile:

@@ -6,7 +6,7 @@ def listen_logs():
     connection_values = pika.ConnectionParameters(
         host="localhost",
         port="5672",
-        virtual_host="archivationsystem",
+        virtual_host="archivingsystem",
         credentials=pika.PlainCredentials(
             "ncadmin",
             "ncadmin",
@@ -23,7 +23,7 @@ def listen_logs():
         print(body.decode())
 
     channel.basic_consume(
-        "archivation_system_logging", callback_print_message, auto_ack=True
+        "archiving_system_logging", callback_print_message, auto_ack=True
     )
     channel.start_consuming()
 

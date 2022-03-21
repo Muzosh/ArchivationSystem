@@ -2,7 +2,7 @@ import sys
 from contextlib import closing
 from pathlib import Path, PurePath
 
-from archivation import archiver
+from archiving import archiver
 from common.yaml_parser import parse_yaml_config
 
 
@@ -33,7 +33,7 @@ def main():
 
     with closing(
         archiver.get_sftp_connection(
-            archiver.parse_config["archivation_system_info"]["remote_access"]
+            archiver.parse_config["archiving_system_info"]["remote_access"]
         )
     ) as sftp_connection:
         hash_f = archiver.get_remote_hash(

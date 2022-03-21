@@ -1,14 +1,14 @@
-from archivationsystem.common.yaml_parser import parse_yaml_config
-from archivationsystem.database.db_library import (
+from archivingsystem.common.yaml_parser import parse_yaml_config
+from archivingsystem.database.db_library import (
     DatabaseHandler,
     MysqlConnection,
 )
-from archivationsystem.retimestamping.retimestamper import Retimestamper
+from archivingsystem.retimestamping.retimestamper import Retimestamper
 
 
 def main():
     config = parse_yaml_config(
-        r"/home/nextcloudadmin/ArchivationSystem/config/start_retimestamping_worker_config.yaml"
+        r"/home/nextcloudadmin/ArchivingSystem/config/start_retimestamping_worker_config.yaml"
     )
     db_config = config.get("db_config")
     with MysqlConnection(db_config) as db_connection:
