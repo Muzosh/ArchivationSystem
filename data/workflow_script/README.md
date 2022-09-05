@@ -1,4 +1,4 @@
-# script_trigger
+# workflow_script
 This is modified version of application workflow external scripts for Nextcloud server.
 
 Link to original version: https://github.com/nextcloud/workflow_script
