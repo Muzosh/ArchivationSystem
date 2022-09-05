@@ -8,7 +8,7 @@ from archivingsystem.retimestamping.retimestamper import Retimestamper
 
 def main():
     config = parse_yaml_config(
-        r"/home/nextcloudadmin/ArchivingSystem/config/start_retimestamping_worker_config.yaml"
+        r"/home/nextcloudadmin/archiving-system-nextcloud/config/start_retimestamping_worker_config.yaml"
     )
     db_config = config.get("db_config")
     with MysqlConnection(db_config) as db_connection:

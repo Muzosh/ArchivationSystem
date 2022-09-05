@@ -6,7 +6,7 @@ from archivingsystem.retimestamping.retimestamping_checker import (
 
 def main():
     config = parse_yaml_config(
-        r"/home/nextcloudadmin/ArchivingSystem/config/start_retimestamping_scheduler_config.yaml"
+        r"/home/nextcloudadmin/archiving-system-nextcloud/config/start_retimestamping_scheduler_config.yaml"
     )
     run_checker_controller(config)
 

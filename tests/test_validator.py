@@ -8,7 +8,7 @@ from archivingsystem.validation.validator import Validator
 
 def main():
     config = parse_yaml_config(
-        r"/home/nextcloudadmin/ArchivingSystem/config/start_validation_worker_config.yaml"
+        r"/home/nextcloudadmin/archiving-system-nextcloud/config/start_validation_worker_config.yaml"
     )
     db_config = config.get("db_config")
     with MysqlConnection(db_config) as db_connection:

@@ -6,7 +6,7 @@ from archivingsystem.common.yaml_parser import parse_yaml_config
 
 def main():
     parsed_config = parse_yaml_config(
-        "/home/nextcloudadmin/ArchivingSystem/config/start_retimestamping_worker_config.yaml"
+        "/home/nextcloudadmin/archiving-system-nextcloud/config/start_retimestamping_worker_config.yaml"
     )
 
     crl = utils.get_current_crl(

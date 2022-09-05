@@ -8,6 +8,6 @@ PYTHON_INTERPRETER=/home/nextcloudadmin/archiving-system-nextcloud/venv/bin/pyth
 SCRIPT_LOCATION=/home/nextcloudadmin/archiving-system-nextcloud/bin/make_archiving_task.py
 
 # SELECT make_archiving_task_config.yaml FILE LOCATION
-CONFIG_LOCATION=/home/nextcloudadmin/ArchivingSystem/config/make_archiving_task_config.yaml
+CONFIG_LOCATION=/home/nextcloudadmin/archiving-system-nextcloud/config/make_archiving_task_config.yaml
 
 $PYTHON_INTERPRETER $SCRIPT_LOCATION -c "$CONFIG_LOCATION" -fp $1 -o $2
