@@ -51,7 +51,7 @@
    - in Nextcloud web interface go to settings -> Administration -> Flow -> Run script and add new Flow:
        - When: Tag assigned
        - and: File system tag - is tagged with - "archive" (need to create this tag on some dummy file first)
-       - script to run: `sh /home/nextcloudadmin/archivation-system-nextcloud/bin/nc_archive_file.sh %p %o`
+       - script to run: `sh /home/nextcloudadmin/archiving-system-nextcloud/bin/nc_archive_file.sh %p %o`
    - setup Cron
        - in Nextcloud web interface go to settings -> Administration -> Basic settings -> Background jobs: select Cron
        - `sudo crontab -u www-data -e` -> select some editor, nano for example
