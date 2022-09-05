@@ -1,5 +1,10 @@
 # Návrhy na vylepšení
 
+### MUST-DO úpravy
+
+1. Sjednotit názvy: z "ArchivationSystem" na "ArchivingSystem" (případně tomu dát úplně nový, více specific nebo kreativní název)
+    - "archiving" je spisovné gerundium od slova "archive" 
+
 ### Funkční a logické návrhy
 
 1. **Vytvořit detailnější logování a popis kódu pomocí Python docstrings.**
