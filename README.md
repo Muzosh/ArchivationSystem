@@ -4,7 +4,7 @@
 
 ## Installation and setup
 
-1. `cd && git clone https://github.com/Muzosh/ArchivingSystem.git`
+1. `cd ~ && git clone https://github.com/Muzosh/archiving-system-nextcloud.git`
 1. install python3 (any version should be fine, 3.10.2 works 100%) and PyPI (pip)
 1. (optional) create virtual environment and activate it
 1. install archivingsystem with dependencies:
