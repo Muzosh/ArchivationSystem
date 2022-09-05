@@ -46,12 +46,12 @@
     - **replace** _\<location-to-nextcloud\>/apps/workflow_script_ contents with contents in _./data/workflow_script_ (including all hidden files)
         - `sudo rm -rf /var/www/nextcloud/apps/workflow_script`
         - `sudo cp -r data/workflow_script /var/www/nextcloud/apps`
-        - `sudo chown -R www-data:www-data /var/www/nextcloud/apps/workflow_script/`
+        - `sudo chown -R www-data:www-data /var/www/nextcloud/apps/workflow_script`
 1. change Workflow external script setting
    - in Nextcloud web interface go to settings -> Administration -> Flow -> Run script and add new Flow:
        - When: Tag assigned
        - and: File system tag - is tagged with - "archive" (need to create this tag on some dummy file first)
-       - script to run: `sh /home/nextcloudadmin/ArchivingSystem/bin/nc_archive_file.sh %p %o`
+       - script to run: `sh /home/nextcloudadmin/archivation-system-nextcloud/bin/nc_archive_file.sh %p %o`
    - setup Cron
        - in Nextcloud web interface go to settings -> Administration -> Basic settings -> Background jobs: select Cron
        - `sudo crontab -u www-data -e` -> select some editor, nano for example
