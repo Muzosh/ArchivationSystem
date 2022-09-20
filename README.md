@@ -8,7 +8,8 @@
 1. install python3 (any version should be fine, 3.10.2 works 100%) and PyPI (pip)
 1. (optional) create virtual environment and activate it
 1. install archivingsystem with dependencies:
-    > pip install \<path-to-this-project\>
+    > sudo pip install \<path-to-this-project\>
+    - SUDO IS IMPORTANT (it will install it globally, so php engine can access it)
 1. (optional) install linter, formatter, etc. used for this project
     > pip install flake8 black rope bandit
 1. download, install and setup RabbitMQ
