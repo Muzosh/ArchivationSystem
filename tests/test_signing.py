@@ -5,7 +5,7 @@ def main():
 
     crt = common_utils.get_certificate("/home/nextcloudadmin/certs/myCert.crt")
     prkey = common_utils.get_private_key(
-       "/home/nextcloudadmin/certs/myCert.key", "ncadmin"
+       "/home/nextcloudadmin/certs/myCert.key", "nextcloudadmin"
     )
 
     signature = common_utils.sign_data(b"test", prkey)

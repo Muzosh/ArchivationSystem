@@ -34,12 +34,12 @@ rabbitmq_info:
   # control_exchange: "control"
 
 archiving_system_info:
-  archiving_storage_path: "/home/nextcloudadmin/results/" #path where archived files will be stored
+  archiving_storage_path: "/home/nextcloudadmin/archived-files/" #path where archived files will be stored
   validity_length_in_years: 2
   signing_info:
     certificate_path: "/home/nextcloudadmin/certs/myCert.crt"
     private_key_path: "/home/nextcloudadmin/certs/myCert.key"
-    pk_password: "ncadmin"
+    pk_password: "nextcloudadmin"
     crl_path: "" #not for now
   remote_access:
     False #information to be able to get files from remote nextcloud server or if you want to run this localy get false
