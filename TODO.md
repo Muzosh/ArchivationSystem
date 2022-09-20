@@ -9,6 +9,10 @@
     - Aktuálně se archivuje soubor již zašifrovaný systémem Nextcloud s využitím interních klíčů.
     - Bude vhodné se zamyslet nad tím, zda bude vhodné soubor ukládat dešifrovaný, re-šifrovaný s použitím nových klíčů nebo se budou také archivovat interní klíče.
     - Více info, jak konkrétně by to šlo udělat, mají P. Muzikant a P. Dzurenda
+1. **Upravit/zrevidovat způsob označování souborů k archivaci**
+    - Aktuálně se musí přidat tag "archive" k souborů, který má být zarchivovaný
+    - Nefunguje to ale pro složky (workflow_script se nespustí)
+    - Bylo by fajn zkusit do UI přidat nějaký button, který soubor odešle k archivaci
 
 ### Funkční a logické návrhy
 1. **Vytvořit detailnější logování a popis kódu pomocí Python docstrings.**
