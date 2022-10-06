@@ -39,7 +39,7 @@ archiving_system_info:
   signing_info:
     certificate_path: "/home/nextcloudadmin/certs/myCert.crt"
     private_key_path: "/home/nextcloudadmin/certs/myCert.key"
-    pk_password: "nextcloudadmin"
+    pk_password: "cert_pass"
     crl_path: "" #not for now
   remote_access:
     False #information to be able to get files from remote nextcloud server or if you want to run this localy get false
