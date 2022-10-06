@@ -6,12 +6,12 @@
 
 1. `cd ~ && git clone https://github.com/Muzosh/archiving-system-nextcloud.git`
 1. install python3 (any version should be fine, 3.10.2 works 100%) and PyPI (pip)
-1. (optional) create virtual environment and activate it
+1. (optional for development) create virtual environment and activate it
 1. install archivingsystem with dependencies:
     > sudo pip install \<path-to-this-project\>
     - SUDO IS IMPORTANT (it will install it globally, so php engine can access it)
 1. (optional) install linter, formatter, etc. used for this project
-    > pip install flake8 black rope bandit
+    > sudo pip install flake8 black rope bandit
 1. download, install and setup RabbitMQ
 
     - install via _./docs/rabbimq_setup.sh_ installation script
@@ -29,10 +29,10 @@
     sudo rabbitmqctl set_user_tags ncadmin administrator
     ```
 
-    - create queues (archiving system vhost, everything else default) in management console (`http://{node-hostname}:15672/`): `archiving`, `failed_tasks`, `validation`, `retimestamping`, `archiving_system_logging`
+    - create queues (archivingsystem vhost, everything else default) in management console (`http://{node-hostname}:15672/`): `archiving`, `failed_tasks`, `validation`, `retimestamping`, `archiving_system_logging`
 
 1. create new exchange:
-    - `virtual host = archiving system`
+    - `virtual host = archivingsystem`
     - `name = log`
     - `type = topic`
     - else default
@@ -43,11 +43,11 @@
     - `sudo mysql -v -uroot -p < path-to-sql-file`
     - scripts are available in ./data/sqlscripts, run then one by one
 1. initialise "Workflow external scripts"
-    - in Nextcloud app store interface find and install "Workflow external scripts"
-    - **replace** _\<location-to-nextcloud\>/apps/workflow_script_ contents with contents in _./data/workflow_script_ (including all hidden files)
-        - `sudo rm -rf /var/www/nextcloud/apps/workflow_script`
-        - `sudo cp -r data/workflow_script /var/www/nextcloud/apps`
+    - install application from source code
+        - `sudo cp -r data/workflow_script /var/www/nextcloud/apps` (this command includes all hidden files)
         - `sudo chown -R www-data:www-data /var/www/nextcloud/apps/workflow_script`
+    - enable the app using the OCC Nextcloud console app
+        - `occ app:enable workflow_script`
 1. change Workflow external script setting
    - in Nextcloud web interface go to settings -> Administration -> Flow -> Run script and add new Flow:
        - When: Tag assigned
@@ -59,11 +59,13 @@
        - on last line add `*  *  *  *  * php -f /var/www/nextcloud/cron.php`
        - verify by `sudo crontab -u www-data -l`
 1. generate and obtain certificates
+   - `mkdir ~/certs`
    - generate self-signed certificate:
-       - `openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -out /home/nextcloudadmin/certs/myCert.crt -keyout /home/nextcloudadmin/certs/myCert.key`
+       - `sudo openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -out ~/certs/myCert.crt -keyout ~/certs/myCert.key`
+       - chosen passphrase will be used in config (default: "cert_pass")
    - generate TSA files:
-       - `wget https://freetsa.org/files/tsa.crt -O /home/nextcloudadmin/certs/tsa.crt`
-       - `wget https://freetsa.org/files/cacert.pem -O /home/nextcloudadmin/certs/cacert.pem`
+       - `wget https://freetsa.org/files/tsa.crt -O ~/certs/tsa.crt`
+       - `wget https://freetsa.org/files/cacert.pem -O ~/certs/cacert.pem`
 1. finish config
    - go through all files in `config` folder and check configuration (create necessary folders for example)
    - check file `bin/nc_archive_file.sh` and input correct python path
